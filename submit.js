@@ -37,7 +37,7 @@ export default async (req) => {
   const chatId = process.env.TELEGRAM_CHAT_ID;
   if (token && chatId) {
     const text = [
-      "🔔 <b>Nova prijava — Re:Form</b>",
+      "💰 <b>Nova prijava — Re:Form</b>",
       "",
       `<b>Firma:</b> ${esc(lead.firma)}`,
       `<b>Sajt:</b> ${esc(lead.sajt)}`,
