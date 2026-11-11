@@ -1928,7 +1928,7 @@ form.addEventListener('submit', async e => {
   if (data.ima_domen === 'Da') delete data.zeljeni_domen; else delete data.domen;
   if (document.getElementById('condShop').hidden) { delete data.broj_proizvoda; delete data.dostava; delete data.placanje; }
   if (document.getElementById('condFood').hidden) { delete data.meni; delete data.rezervacije; }
-  data.izvor = 'landing'; data.stranica = location.href; data.vreme = new Date().toISOString();
+  data.izvor = 'landing'; try { const T = window.RF_T || {}; data._vid = T.vid || ''; data._src = T.src || ''; data._cmp = T.cmp || ''; } catch(_){} data.stranica = location.href; data.vreme = new Date().toISOString();
 
   if (!CONFIG.WEBHOOK_URL) { console.warn('[Forma] WEBHOOK_URL nije podešen. Podaci NISU poslati:', data); fDev.classList.add('show'); return; }
 
@@ -2005,6 +2005,44 @@ form.addEventListener('submit', async e => {
   show(0);
   if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   setInterval(()=>{i=(i+1)%imgs.length;show(i);},3200);
+})();
+</script>
+
+<script>
+/* Re:Form analitika: posete, klikovi na poziv/WhatsApp, početak upitnika */
+(function(){
+  var vid, src, cmp;
+  try {
+    vid = localStorage.getItem('rf_vid');
+    if (!vid) { vid = Date.now().toString(36) + Math.random().toString(36).slice(2, 8); localStorage.setItem('rf_vid', vid); }
+    var q = new URLSearchParams(location.search);
+    var s = q.get('utm_source') || (q.get('fbclid') ? 'meta' : '') || (q.get('gclid') ? 'google' : '');
+    if (s) { localStorage.setItem('rf_src', s.toLowerCase()); localStorage.setItem('rf_cmp', q.get('utm_campaign') || ''); }
+    else if (!localStorage.getItem('rf_src') && document.referrer && document.referrer.indexOf(location.host) < 0) {
+      var h = ''; try { h = new URL(document.referrer).hostname.replace(/^www\./, ''); } catch(e){}
+      if (/google\./.test(h)) h = 'google'; else if (/facebook|fb\.|instagram/.test(h)) h = 'meta';
+      if (h) { localStorage.setItem('rf_src', h); localStorage.setItem('rf_cmp', ''); }
+    }
+    src = localStorage.getItem('rf_src') || 'direktno'; cmp = localStorage.getItem('rf_cmp') || '';
+  } catch(e) { vid = 'anon'; src = 'direktno'; cmp = ''; }
+  window.RF_T = { vid: vid, src: src, cmp: cmp };
+  function t(e){
+    var body = JSON.stringify({ e: e, v: vid, src: src, cmp: cmp });
+    try { if (navigator.sendBeacon && navigator.sendBeacon('/api/track', new Blob([body], { type: 'text/plain' }))) return; } catch(x){}
+    try { fetch('/api/track', { method: 'POST', body: body, keepalive: true, headers: { 'Content-Type': 'text/plain' } }); } catch(x){}
+  }
+  window.rfTrack = t;
+  if (location.hostname.indexOf('claude') < 0) t('pv');
+  document.addEventListener('click', function(ev){
+    var a = ev.target.closest && ev.target.closest('a[href]'); if (!a) return;
+    var h = a.getAttribute('href') || '';
+    if (h.indexOf('tel:') === 0) t('call');
+    else if (/wa\.me|whatsapp/.test(h)) t('wa');
+  }, true);
+  var started = false;
+  document.addEventListener('focusin', function(ev){
+    if (!started && ev.target.closest && ev.target.closest('#leadForm')) { started = true; t('form_start'); }
+  });
 })();
 </script>
 </body>
