@@ -1,5 +1,25 @@
 // CRM API (zaštićen sa ADMIN_KEY): lista, izmena, ručno dodavanje i brisanje prijava.
-import { store, json, isAdmin, clean, newId } from "../lib/crm.mjs";
+import { getStore } from "@netlify/blobs";
+
+const store = (name) => getStore({ name, consistency: "strong" });
+
+const json = (o, s = 200, extra = {}) =>
+  new Response(JSON.stringify(o), { status: s, headers: { "Content-Type": "application/json", "Cache-Control": "no-store", ...extra } });
+
+const isAdmin = (req) => {
+  const key = Netlify.env.get("ADMIN_KEY");
+  if (!key) return false;
+  const given = req.headers.get("x-admin-key") || new URL(req.url).searchParams.get("key");
+  return given === key;
+};
+
+// Datum po beogradskom vremenu (YYYY-MM-DD)
+const day = (d = new Date()) =>
+  new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Belgrade" }).format(d);
+
+const clean = (v, max = 200) => String(v ?? "").trim().slice(0, max);
+
+const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 
 const STATUSI = ["nova", "u radu", "poslato", "kupio", "odbijeno"];
 const POLJA = ["ime", "firma", "telefon", "email", "sajt", "cilj", "paket", "beleske", "izvor", "utm_source", "utm_campaign"];
