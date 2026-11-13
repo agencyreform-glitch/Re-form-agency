@@ -236,7 +236,7 @@ h2.headline{font-size:clamp(28px,4.2vw,44px);margin-bottom:18px}
 .price b{font-family:var(--h);font-weight:900;font-size:58px;color:var(--ink);line-height:1}
 .price small{display:block;font-size:14.5px;color:var(--muted);font-weight:700;margin-top:4px}
 .scope{text-align:center;font-family:var(--h);font-weight:800;font-size:16px;color:var(--red);margin:10px 0 16px}
-.plan ul{list-style:none;padding:0;margin:0 0 24px;display:grid;gap:9px;flex:1}
+.plan ul{list-style:none;padding:0;margin:0 0 24px;display:grid;gap:9px;flex:1;align-content:start}
 .plan li{display:flex;gap:10px;font-size:16px;line-height:1.45}
 .plan li svg{width:20px;height:20px;color:var(--green);margin-top:2px;stroke-width:3.4}
 .plan li.all{font-weight:800;color:var(--ink)}
@@ -1639,12 +1639,18 @@ select.inp{min-height:54px}
       </article>
       <article class="plan rec">
         <div class="flag">★ NAŠA PREPORUKA ★</div>
-        <div class="plan-top"><b>BUSINESS</b><small>Za biznis koji želi da ga shvate ozbiljno</small></div>
+        <div class="plan-top"><b>BUSINESS</b><small>Kad jedna stranica nije dovoljna za sve što radite</small></div>
         <div class="plan-body">
           <div class="price"><span class="bf-only bf-was">899 €</span><b>299 €</b><small><span class="bf-only">Black Friday cena, </span>jednokratno</small></div>
+          <p class="scope">Samo 100 € više od START paketa</p>
           <ul>
             <li class="all"><svg class="ico"><use href="#i-check"/></svg>Sve iz START paketa, plus:</li>
-            <li><svg class="ico"><use href="#i-check"/></svg>Za malo komplikovanije i opširnije sajtove, kada vam treba više stranica, više sadržaja i više prostora da predstavite ceo biznis.</li>
+            <li><svg class="ico"><use href="#i-check"/></svg><span><b>Do 10 stranica</b> umesto jedne</span></li>
+            <li><svg class="ico"><use href="#i-check"/></svg>Naprednije animacije i efekti pri skrolovanju</li>
+            <li><svg class="ico"><use href="#i-check"/></svg>Povezan Meta Pixel i Google Analytics</li>
+            <li><svg class="ico"><use href="#i-check"/></svg>Google Search Console i prijava sajta Google-u</li>
+            <li><svg class="ico"><use href="#i-check"/></svg>Povezivanje sa Google Business profilom</li>
+            <li><svg class="ico"><use href="#i-check"/></svg><span><b>Poklon: 6 meseci održavanja</b></span></li>
           </ul>
           <a class="cta full" href="#upitnik" data-package="BUSINESS"><b>IZABERI BUSINESS <svg class="ico"><use href="#i-arrow"/></svg></b><small>Bez avansa<span class="bf-only"> · cena važi do 30. 11.</span></small></a>
           <p class="plan-m">Održavanje (opciono): 149 €/god.</p>
