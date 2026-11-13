@@ -3,7 +3,7 @@
 // Levak: s:<sekcija> (dokle su stigli), f:vidi (videli upitnik), fp:<polje> (dotakli polje),
 // fe:<polje> (greška u polju), k:<korak> (prešli na korak), sub:try|ok|err (slanje),
 // x:<polje> / xk:<korak> (gde su izašli iz upitnika), c:<sekcija> (klik ka upitniku), pk:<paket>, dv:m|d (uređaj).
-// Brojači se čuvaju po danu u storu "analitika-v2": ev = svi događaji, uq = jedinstveni posetioci.
+// Brojači se čuvaju po danu u storu "analitika-v3": ev = svi događaji, uq = jedinstveni posetioci.
 import { getStore } from "@netlify/blobs";
 
 const store = (name) => getStore({ name, consistency: "strong" });
@@ -43,7 +43,7 @@ export default async (req) => {
   const src = clean(d.src, 40).toLowerCase() || "direktno";
   const cmp = clean(d.cmp, 60);
   const today = day();
-  const s = store("analitika-v2");
+  const s = store("analitika-v3");
 
   // jedinstveni posetilac: šta je ovaj posetilac već uradio danas
   let fresh = [];

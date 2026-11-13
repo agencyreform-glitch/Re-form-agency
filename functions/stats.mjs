@@ -23,7 +23,7 @@ const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2
 
 export default async (req) => {
   if (!isAdmin(req)) return json({ ok: false, error: "Neispravan ključ" }, 401);
-  const s = store("analitika-v2"); // reset analitike 13. 11. 2026
+  const s = store("analitika-v3"); // reset analitike 13. 11. 2026 (drugi put)
   const { blobs } = await s.list({ prefix: "dan/" });
   const days = (await Promise.all(blobs.map((b) => s.get(b.key, { type: "json" })))).filter(Boolean);
 
