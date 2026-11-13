@@ -38,7 +38,7 @@ export default async (req) => {
   const src = clean(d.src, 40).toLowerCase() || "direktno";
   const cmp = clean(d.cmp, 60);
   const today = day();
-  const s = store("analitika");
+  const s = store("analitika-v2"); // reset analitike 13. 11. 2026
 
   // jedinstveni posetilac / jedinstven događaj po danu
   const seenKey = `seen/${today}/${e}/${vid}`;
