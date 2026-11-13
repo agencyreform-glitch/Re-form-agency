@@ -1503,7 +1503,7 @@ select.inp{min-height:54px}
 </section>
 
 <!-- PISMO -->
-<section class="sec gray">
+<section class="sec gray" id="problem">
   <div class="col letter">
     <p class="dear">Dragi vlasnici biznisa,</p>
     <p class="one">Sajt vam je na listi „uradiću to" već mesecima. Znamo i zašto.</p>
@@ -1827,7 +1827,7 @@ select.inp{min-height:54px}
 </section>
 
 <!-- P.S. -->
-<section class="ps">
+<section class="ps" id="ps">
   <div class="col">
     <p><b class="k">P.S.</b> Skrolovali ste pravo dovde? Kratka verzija: popunite upitnik, za 12 sati gledate sajt, plaćate samo ako vam se svidi. Kasnimo? Ručak i sajt su vaši.</p>
     <p><b class="k">P.P.S.</b> Najgore što može da vam se desi je besplatan ručak. <a href="#upitnik"><b>Popunite upitnik ovde.</b></a></p>
@@ -1874,6 +1874,7 @@ document.querySelectorAll('.chip').forEach(chip => chip.addEventListener('click'
 })();
 
 /* Forma u 4 koraka */
+const rfT = k => { try { if (window.rfTrack) window.rfTrack(k); } catch(_){} };
 const form = document.getElementById('leadForm');
 const steps = [...form.querySelectorAll('.fstep')];
 const NAMES = ['Kontakt podaci','Podaci o biznisu','Domen i sadržaj','Slike i potvrda'];
@@ -1895,7 +1896,7 @@ Object.values(rules).forEach(r => Object.keys(r).forEach(id => {
 }));
 function check(step){
   let first = null; const r = rules[step];
-  Object.keys(r).forEach(id => { const el = document.getElementById(id); if (!r[id](el.value, el)) { setErr(el); first = first || el; } else clearErr(el); });
+  Object.keys(r).forEach(id => { const el = document.getElementById(id); if (!r[id](el.value, el)) { setErr(el); rfT('fe:' + el.name); first = first || el; } else clearErr(el); });
   if (first) first.focus();
   return !first;
 }
@@ -1909,7 +1910,7 @@ function show(step){
   fPrev.hidden = step === 1; fNext.hidden = step === 4; fBtn.hidden = step !== 4;
   document.getElementById('upitnik').querySelector('.form-box').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
-fNext.addEventListener('click', () => { if (check(cur)) show(cur + 1); /* INTEGRACIJA: ovde može da se pošalje delimični lead posle koraka 1 */ });
+fNext.addEventListener('click', () => { if (check(cur)) { show(cur + 1); rfT('k:' + cur); } /* INTEGRACIJA: ovde može da se pošalje delimični lead posle koraka 1 */ });
 fPrev.addEventListener('click', () => show(cur - 1));
 
 /* Paket iz cenovnika ide u formu */
@@ -1931,6 +1932,7 @@ form.addEventListener('submit', async e => {
   e.preventDefault();
   if (cur !== 4) { fNext.click(); return; }
   fErr.classList.remove('show'); fDev.classList.remove('show');
+  rfT('sub:try');
   if (!check(4)) return;
   const fd = new FormData(form);
   if (fd.get('website_hp')) return;
@@ -1949,9 +1951,10 @@ form.addEventListener('submit', async e => {
     const res = await fetch(CONFIG.WEBHOOK_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data) });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     if (typeof window.fbq === 'function') { window.fbq('track', 'Lead', { content_name: data.paket }); window.fbq('track', 'CompleteRegistration', { content_name: data.paket }); }
+    rfT('sub:ok');
     document.getElementById('formWrap').hidden = true;
     const ok = document.getElementById('fOk'); ok.classList.add('show'); ok.focus();
-  } catch (err) { console.error('[Forma] Greška pri slanju:', err); fErr.classList.add('show'); }
+  } catch (err) { console.error('[Forma] Greška pri slanju:', err); rfT('sub:err'); fErr.classList.add('show'); }
   finally { fBtn.classList.remove('btn-loading'); }
 });
 
@@ -2027,7 +2030,7 @@ document.addEventListener('click', e => {
 </script>
 
 <script>
-/* Re:Form analitika: posete, klikovi na poziv/WhatsApp, početak upitnika */
+/* Re:Form analitika: posete, klikovi, dokle stižu na stranici i gde odustaju u upitniku */
 (function(){
   var vid, src, cmp;
   try {
@@ -2044,23 +2047,79 @@ document.addEventListener('click', e => {
     src = localStorage.getItem('rf_src') || 'direktno'; cmp = localStorage.getItem('rf_cmp') || '';
   } catch(e) { vid = 'anon'; src = 'direktno'; cmp = ''; }
   window.RF_T = { vid: vid, src: src, cmp: cmp };
+
+  var live = location.hostname.indexOf('claude') < 0;
+  var sent = {}, queue = [], timer = null, fs = false, done = false, lastF = '';
+  var NOW = { pv: 1, call: 1, wa: 1, 'sub:ok': 1, 'sub:err': 1 };
+
+  function flush(){
+    if (timer) { clearTimeout(timer); timer = null; }
+    while (queue.length) {
+      var body = JSON.stringify({ evs: queue.splice(0, 40), v: vid, src: src, cmp: cmp });
+      if (!live) continue;
+      var ok = false;
+      try { ok = !!(navigator.sendBeacon && navigator.sendBeacon('/api/track', new Blob([body], { type: 'text/plain' }))); } catch(x){}
+      if (!ok) { try { fetch('/api/track', { method: 'POST', body: body, keepalive: true, headers: { 'Content-Type': 'text/plain' } }); } catch(x){} }
+    }
+  }
   function t(e){
-    var body = JSON.stringify({ e: e, v: vid, src: src, cmp: cmp });
-    try { if (navigator.sendBeacon && navigator.sendBeacon('/api/track', new Blob([body], { type: 'text/plain' }))) return; } catch(x){}
-    try { fetch('/api/track', { method: 'POST', body: body, keepalive: true, headers: { 'Content-Type': 'text/plain' } }); } catch(x){}
+    if (!e || sent[e]) return;
+    sent[e] = 1; queue.push(e);
+    if (e === 'sub:ok') done = true;
+    if (NOW[e]) flush(); else if (!timer) timer = setTimeout(flush, 2500);
   }
   window.rfTrack = t;
-  if (location.hostname.indexOf('claude') < 0) t('pv');
+  t('pv');
+  t(window.matchMedia && matchMedia('(max-width: 768px)').matches ? 'dv:m' : 'dv:d');
+
+  /* klikovi: poziv, WhatsApp, dugmad ka upitniku i izbor paketa */
   document.addEventListener('click', function(ev){
     var a = ev.target.closest && ev.target.closest('a[href]'); if (!a) return;
     var h = a.getAttribute('href') || '';
     if (h.indexOf('tel:') === 0) t('call');
     else if (/wa\.me|whatsapp/.test(h)) t('wa');
+    else if (h === '#upitnik') {
+      var sec = a.closest('#mcta') ? 'mcta' : (a.closest('section[id]') || {}).id || 'meni';
+      t('c:' + sec);
+      if (a.dataset.package) t('pk:' + a.dataset.package.toLowerCase());
+    }
   }, true);
-  var started = false;
-  document.addEventListener('focusin', function(ev){
-    if (!started && ev.target.closest && ev.target.closest('#leadForm')) { started = true; t('form_start'); }
-  });
+
+  /* dokle stižu: sekcija se računa kad njen vrh pređe 70% visine ekrana */
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(en){ if (en.isIntersecting) { t(en.target.dataset.rfk); io.unobserve(en.target); } });
+    }, { rootMargin: '0px 0px -30% 0px' });
+    ['top','primeri','problem','kako-radi','sta-dobijate','cene','garancija','pitanja','upitnik','ps'].forEach(function(id){
+      var el = document.getElementById(id); if (el) { el.dataset.rfk = 's:' + id; io.observe(el); }
+    });
+    var fb = document.querySelector('#upitnik .form-box');
+    if (fb) {
+      var io2 = new IntersectionObserver(function(es){ if (es[0].isIntersecting) { t('f:vidi'); io2.disconnect(); } }, { threshold: 0.25 });
+      io2.observe(fb);
+    }
+  }
+
+  /* upitnik: prvo polje, svako dotaknuto polje i poslednje polje pre izlaska */
+  function fld(ev){
+    var el = ev.target;
+    if (!el || !el.name || el.name === 'website_hp' || !el.closest || !el.closest('#leadForm')) return;
+    if (!fs) { fs = true; t('form_start'); }
+    lastF = el.name; t('fp:' + el.name);
+  }
+  document.addEventListener('focusin', fld);
+  document.addEventListener('change', fld);
+
+  function leave(){
+    if (fs && !done) {
+      var st = document.querySelector('#leadForm .fstep:not([hidden])');
+      t('x:' + (lastF || 'nista'));
+      if (st) t('xk:' + st.dataset.step);
+    }
+    flush();
+  }
+  document.addEventListener('visibilitychange', function(){ if (document.visibilityState === 'hidden') leave(); });
+  window.addEventListener('pagehide', leave);
 })();
 </script>
 </body>

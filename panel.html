@@ -100,6 +100,19 @@ textarea.inp{min-height:90px;resize:vertical}
 svg text{font:11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:var(--mut)}
 .legend{display:flex;gap:14px;font-size:12px;color:var(--mut);margin-bottom:8px}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+/* gde otpadaju */
+.two>*{min-width:0}
+.lv{display:grid;grid-template-columns:minmax(150px,210px) 1fr 74px 92px;gap:10px;align-items:center;padding:4px 0}
+.lv .n{font-weight:600}
+.lv .c{text-align:right;font-weight:700}.lv .c small{display:block;font-weight:500;color:var(--mut);font-size:11px}
+.lv .d{text-align:right;color:var(--mut);font-weight:600;font-size:13px}.lv .d small{font-weight:500}
+.lv.worst .d{color:var(--p)}.lv.worst .bar i{background:var(--p)}
+.lv.sm{grid-template-columns:minmax(150px,210px) 1fr 50px 0}
+.ins{background:#FDECEE;color:#8F0E19;border-radius:10px;padding:9px 12px;margin-bottom:12px;font-size:13px}
+.xk{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.tbl tr.grp td{background:#F6F5F2;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.03em;color:var(--mut);padding:7px 10px}
+.tbl td.hot{color:var(--p);font-weight:700}
+@media(max-width:600px){.hd{flex-wrap:wrap}.tabs{order:3;width:100%;margin-left:0}.tabs button{flex:1;padding:6px 4px}.lv{grid-template-columns:1fr 64px 70px}.lv .bar{grid-column:1/-1;grid-row:2}.lv.sm{grid-template-columns:1fr 50px}}
 </style>
 </head>
 <body>
@@ -120,7 +133,7 @@ svg text{font:11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:v
 <div id="vApp" class="hide">
 <header><div class="hd">
   <div class="logo"><span class="mark">R</span><span>Re<em>:</em>Form</span><small>CRM</small></div>
-  <div class="tabs"><button data-tab="pregled" class="on">Pregled</button><button data-tab="prijave">Prijave</button></div>
+  <div class="tabs"><button data-tab="pregled" class="on">Pregled</button><button data-tab="levak">Gde otpadaju</button><button data-tab="prijave">Prijave</button></div>
   <div class="sp"></div>
   <button class="ic" id="bRefresh" title="Osveži">↻</button>
   <button class="ic" id="bOut" title="Odjavi se">⎋</button>
@@ -145,6 +158,23 @@ svg text{font:11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:v
     <div class="card" style="margin-top:12px"><h2>Izvori saobraćaja</h2>
       <div class="scroll"><table class="tbl" id="tIzvori"></table></div>
       <p class="help">Izvor se čita iz utm_source i utm_campaign u linku oglasa (npr. ?utm_source=meta&amp;utm_campaign=bf26).</p>
+    </div>
+  </section>
+
+  <!-- GDE OTPADAJU -->
+  <section id="tLevak" class="hide">
+    <div class="row" style="justify-content:space-between;gap:10px">
+      <div class="chips" id="cPeriodL"></div>
+      <div class="chips" id="cSrcL"></div>
+    </div>
+    <div class="grid kpis" id="gKpiL"></div>
+    <div class="grid two">
+      <div class="card"><h2>Dokle stignu na stranici</h2><div id="dSek"></div><p class="help">Broj posetilaca koji su doskrolovali do sekcije. Desno je koliko ih je otpalo u odnosu na sekciju iznad. Ko klikne dugme ka upitniku, preskače sekcije između.</p></div>
+      <div class="card"><h2>Upitnik korak po korak</h2><div id="dForm"></div><p class="help">„Napustili stranicu" znači da su počeli upitnik i zatvorili ili sklonili stranicu pre slanja.</p></div>
+    </div>
+    <div class="grid two" style="margin-top:12px;align-items:start">
+      <div class="card"><h2>Polja u upitniku</h2><div id="dPolja"></div><p class="help">Dotakli = kliknuli u polje. Greška = pokušali dalje sa praznim ili pogrešnim poljem. Izašli posle njega = to je bilo poslednje polje koje su dirali pre nego što su otišli. * obavezno polje.</p></div>
+      <div class="card"><h2>Odakle kreću ka upitniku</h2><div id="dCta"></div><p class="help">Klikovi na dugmad koja vode na upitnik, po mestu na stranici.</p></div>
     </div>
   </section>
 
@@ -214,7 +244,9 @@ $('bRefresh').onclick = async () => { try{ await load(); render(); toast('Osvež
 document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => {
   document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on', x===b));
   $('tPregled').classList.toggle('hide', b.dataset.tab!=='pregled');
+  $('tLevak').classList.toggle('hide', b.dataset.tab!=='levak');
   $('tPrijave').classList.toggle('hide', b.dataset.tab!=='prijave');
+  if (b.dataset.tab==='levak') renderLevak();
 });
 
 /* ---------- period ---------- */
@@ -231,11 +263,11 @@ const leadDay = l => l.createdAt ? bgDay(new Date(l.createdAt)) : '';
 const saleDay = l => bgDay(new Date(l.kupljeno || l.updatedAt || l.createdAt));
 
 /* ---------- render ---------- */
-function render(){ renderPregled(); renderPrijave(); }
+function render(){ renderPregled(); renderLevak(); renderPrijave(); }
 
 function renderPregled(){
   $('cPeriod').innerHTML = PER.map(p=>`<button class="chip ${S.period===p.k?'on':''}" data-p="${p.k}">${p.n}</button>`).join('');
-  $('cPeriod').querySelectorAll('button').forEach(b=>b.onclick=()=>{S.period=b.dataset.p; renderPregled();});
+  $('cPeriod').querySelectorAll('button').forEach(b=>b.onclick=()=>{S.period=b.dataset.p; renderPregled(); renderLevak();});
   const R = range();
   const days = S.days.filter(d=>inR(d.datum,R));
   const sum = (f,e) => days.reduce((n,d)=>n+((d[f]||{})[e]||0),0);
@@ -302,6 +334,107 @@ function renderIzvori(R, days, leads, sales){
   $('tIzvori').innerHTML = rows.length ? `<thead><tr><th>Izvor</th><th class="num">Posetioci</th><th class="num">Kontakt klik</th><th class="num">Prijave</th><th class="num">Konverzija</th><th class="num">Kupili</th><th class="num">Prihod</th></tr></thead><tbody>`+
     rows.map(([k,r])=>`<tr><td><b>${esc(k)}</b></td><td class="num">${r.pv}</td><td class="num">${r.kontakt}</td><td class="num">${r.leads}</td><td class="num">${pct(r.leads,r.pv)}</td><td class="num">${r.sales}</td><td class="num">${eur(r.rev)}</td></tr>`).join('')+'</tbody>'
     : '<tbody><tr><td class="empty">Još nema podataka.</td></tr></tbody>';
+}
+
+/* ---------- gde otpadaju (levak po sekcijama i upitniku) ---------- */
+const SEKCIJE = [
+  ['top','Početak (prvi ekran)'], ['primeri','Primeri sajtova'], ['problem','„Dragi vlasnici biznisa"'],
+  ['kako-radi','Kako radi, 4 koraka'], ['sta-dobijate','Šta dobijate + pokloni'], ['cene','Paketi i cene'],
+  ['garancija','Garancija (ručak)'], ['pitanja','Česta pitanja'], ['upitnik','Upitnik'], ['ps','P.S. na dnu']
+];
+const KORACI = [
+  ['f:vidi','Videli upitnik'], ['form_start','Počeli da popunjavaju'], ['k:2','Prošli korak 1 · Kontakt'],
+  ['k:3','Prošli korak 2 · Biznis'], ['k:4','Prošli korak 3 · Domen i sadržaj'], ['sub:try','Kliknuli „Pošalji"'], ['sub:ok','Uspešno poslali']
+];
+const POLJA = [
+  [1,'Kontakt podaci',[['ime_prezime','Ime i prezime',1],['telefon','Telefon',1],['dostupan_na','WhatsApp / Viber',0],['email','Email',1]]],
+  [2,'Podaci o biznisu',[['naziv_biznisa','Naziv biznisa',1],['vrsta_biznisa','Vrsta biznisa',1],['paket','Paket',1],['delatnost','Opis delatnosti',1],['adresa','Adresa',0],['radno_vreme','Radno vreme',0],['telefon_za_kupce','Telefon za kupce',0],['email_za_kupce','Email za kupce',0],['instagram','Instagram',0],['facebook','Facebook',0],['drugi_linkovi','Drugi linkovi',0],['pib_mb','PIB i MB',0]]],
+  [3,'Domen i sadržaj',[['ima_domen','Ima li domen',0],['domen','Domen',0],['zeljeni_domen','Željeni domen',0],['logo','Logo',0],['boje','Boje',0],['primer_sajta','Primer sajta',0],['usluge_proizvodi','Usluge / proizvodi',0],['broj_proizvoda','Broj proizvoda',0],['dostava','Dostava',0],['placanje','Plaćanje',0],['meni','Meni',0],['rezervacije','Rezervacije',0],['o_nama','O nama',0],['stranice','Stranice',0],['odrzavanje','Održavanje',0]]],
+  [4,'Slike i potvrda',[['salje_slike','Slike i video',0],['napomene','Napomene',0],['saglasnost_podaci','Saglasnost (podaci)',1],['saglasnost_privatnost','Saglasnost (privatnost)',1]]]
+];
+const CTA_SRC = { top:'Prvi ekran', primeri:'Primeri', problem:'„Dragi vlasnici"', 'kako-radi':'Kako radi', 'sta-dobijate':'Šta dobijate', cene:'Cene', garancija:'Garancija', pitanja:'Pitanja', ps:'P.S. na dnu', mcta:'Lepljivo dugme (telefon)', meni:'Dugme u meniju' };
+S.lvSrc = 'svi';
+
+function lvDays(){ const R = range(); return S.days.filter(d=>inR(d.datum,R)); }
+function lvSum(days, key, kind='uq'){
+  return days.reduce((n,d)=>{
+    if (S.lvSrc==='svi') return n + ((d[kind]||{})[key]||0);
+    return n + Object.entries(d.izvori||{}).filter(([k])=>k.split(' · ')[0]===S.lvSrc).reduce((m,[,v])=>m+((v[kind]||{})[key]||0),0);
+  },0);
+}
+function lvRows(rows, base){
+  // rows: [label, n]; prikazuje udeo od baze i pad u odnosu na red iznad, najveći pad crveno
+  // najveći pad = najviše izgubljenih ljudi (kod istog broja, veći procenat)
+  let worst = 0, wi = -1;
+  rows.forEach((r,i)=>{ if(i && rows[i-1][1]>0){ const lost=rows[i-1][1]-r[1], sc=lost+lost/rows[i-1][1]/100; if(lost>0 && sc>worst){worst=sc; wi=i;} } });
+  return rows.map((r,i)=>{
+    const prev = i ? rows[i-1][1] : 0, drop = i && prev ? Math.max(0, prev - r[1]) : 0;
+    const dp = i && prev ? Math.round(drop/prev*100) : 0;
+    return `<div class="lv ${i===wi&&worst>0?'worst':''}"><div class="n">${r[0]}</div>
+      <div class="bar"><i style="width:${base? Math.min(100,r[1]/base*100):0}%"></i></div>
+      <div class="c">${r[1]}<small>${base? pct(r[1],base):'—'}</small></div>
+      <div class="d">${i&&prev? (drop? '−'+drop+' <small>('+dp+'%)</small>' : '<small>0</small>') : ''}</div></div>`;
+  }).join('');
+}
+function lvInsight(rows, what){
+  let best=null;
+  rows.forEach((r,i)=>{ if(i && rows[i-1][1]>0){ const lost=rows[i-1][1]-r[1], sc=lost+lost/rows[i-1][1]/100; if(lost>0 && (!best || sc>best.sc)) best={lost, sc, from:rows[i-1][0], to:r[0], p:Math.round(lost/rows[i-1][1]*100)}; } });
+  return best ? `<p class="ins">Najviše ${what} gubiš između <b>${best.from}</b> i <b>${best.to}</b>: ${best.lost} (${best.p}%).</p>` : '';
+}
+
+function renderLevak(){
+  $('cPeriodL').innerHTML = PER.map(p=>`<button class="chip ${S.period===p.k?'on':''}" data-p="${p.k}">${p.n}</button>`).join('');
+  $('cPeriodL').querySelectorAll('button').forEach(b=>b.onclick=()=>{S.period=b.dataset.p; renderLevak(); renderPregled();});
+  const days = lvDays();
+  const srcs = [...new Set(days.flatMap(d=>Object.keys(d.izvori||{}).map(k=>k.split(' · ')[0])))].sort();
+  if (S.lvSrc!=='svi' && !srcs.includes(S.lvSrc)) S.lvSrc='svi';
+  $('cSrcL').innerHTML = ['svi',...srcs].map(s=>`<button class="chip ${S.lvSrc===s?'on':''}" data-s="${esc(s)}">${s==='svi'?'Svi izvori':esc(s)}</button>`).join('');
+  $('cSrcL').querySelectorAll('button').forEach(b=>b.onclick=()=>{S.lvSrc=b.dataset.s; renderLevak();});
+
+  const u = k => lvSum(days, k);
+  const vis = u('pv');
+  const mob = u('dv:m'), desk = u('dv:d');
+  const fv = u('f:vidi'), fs = u('form_start'), ok = u('sub:ok');
+  $('gKpiL').innerHTML = [
+    {l:'Posetioci', v:vis, s: (mob+desk)? Math.round(mob/(mob+desk)*100)+'% sa telefona' : '—'},
+    {l:'Stigli do upitnika', v:u('s:upitnik'), s:pct(u('s:upitnik'),vis)+' posetilaca'},
+    {l:'Počeli upitnik', v:fs, s:pct(fs,fv)+' od onih koji su ga videli'},
+    {l:'Poslali upitnik', v:ok, s:pct(ok,fs)+' od onih koji su počeli', hl:1},
+    {l:'Odustali usred upitnika', v:Math.max(0,fs-ok), s:pct(Math.max(0,fs-ok),fs)+' od onih koji su počeli'}
+  ].map(k=>`<div class="card kpi ${k.hl?'hl':''}"><div class="l">${k.l}</div><div class="v">${k.v}</div><div class="s">${k.s}</div></div>`).join('');
+
+  if (!vis) {
+    ['dSek','dForm','dPolja','dCta'].forEach(id=>$(id).innerHTML='<div class="empty">Još nema podataka za ovaj period. Brojanje kreće od prve posete posle objave.</div>');
+    return;
+  }
+
+  const sek = SEKCIJE.map(([id,n])=>[n, u('s:'+id)]);
+  $('dSek').innerHTML = lvInsight(sek,'posetilaca') + lvRows(sek, vis);
+
+  const kor = KORACI.map(([k,n])=>[n, u(k)]);
+  const err = u('sub:err');
+  const xk = [1,2,3,4].map(i=>u('xk:'+i));
+  $('dForm').innerHTML = lvInsight(kor,'ljudi') + lvRows(kor, kor[0][1] || fs) +
+    `<div class="xk"><span class="sub">Na kom koraku su napustili stranicu:</span>${xk.map((n,i)=>`<span class="pill ${n?'st-nova':'st-odbijeno'}">Korak ${i+1}: ${n}</span>`).join('')}</div>` +
+    (err? `<p class="ins">Slanje nije prošlo ${err} puta (greška servera ili veze). Proveri da li prijave stižu na Telegram.</p>` : '');
+
+  const rows = POLJA.map(([st,nm,fl])=>{
+    const head = `<tr class="grp"><td colspan="5">Korak ${st} · ${nm}</td></tr>`;
+    const body = fl.map(([k,n,req])=>{
+      const t = u('fp:'+k), e = u('fe:'+k), x = u('x:'+k);
+      return `<tr><td>${n}${req?' <span class="sub">*</span>':''}</td><td class="num">${t}</td><td class="num">${pct(t,fs)}</td><td class="num ${e?'hot':''}">${e||''}</td><td class="num ${x?'hot':''}">${x||''}</td></tr>`;
+    }).join('');
+    return head + body;
+  }).join('');
+  const xs = POLJA.flatMap(p=>p[2]).map(([k,n])=>[n,u('x:'+k)]).filter(r=>r[1]).sort((a,b)=>b[1]-a[1]);
+  $('dPolja').innerHTML = (xs.length? `<p class="ins">Najčešće poslednje polje pre odlaska: <b>${xs[0][0]}</b> (${xs[0][1]}).</p>`:'') +
+    `<div class="scroll"><table class="tbl"><thead><tr><th>Polje</th><th class="num">Dotakli</th><th class="num">% od započetih</th><th class="num">Greška</th><th class="num">Izašli posle njega</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+
+  const cta = Object.keys(CTA_SRC).map(k=>[CTA_SRC[k], u('c:'+k)]).filter(r=>r[1]).sort((a,b)=>b[1]-a[1]);
+  const pk = ['start','business','shop'].map(k=>[k.toUpperCase(), u('pk:'+k)]);
+  const mx = Math.max(1,...cta.map(r=>r[1]));
+  $('dCta').innerHTML = (cta.length? cta.map(r=>`<div class="lv sm"><div class="n">${r[0]}</div><div class="bar"><i style="width:${r[1]/mx*100}%"></i></div><div class="c">${r[1]}</div><div class="d"></div></div>`).join('') : '<div class="empty">Još niko nije kliknuo dugme ka upitniku.</div>') +
+    `<div class="xk"><span class="sub">Izabran paket iz cenovnika:</span>${pk.map(r=>`<span class="pill st-u-radu">${r[0]}: ${r[1]}</span>`).join('')}</div>`;
 }
 
 /* ---------- prijave ---------- */
