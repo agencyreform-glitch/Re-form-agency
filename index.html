@@ -1738,7 +1738,7 @@ select.inp{min-height:54px}
     <p class="subhead">Ostavite ime i broj telefona. Ostatak posla je na nama.</p>
 
     <div class="form-box">
-      <div class="fb-head"><b id="fbT">Prijavite se za svoj sajt</b><small id="fbS">Traje 20 sekundi. Bez avansa i bez obaveze.</small><p class="fb-urg bf-only"><svg class="ico"><use href="#i-clock"/></svg><span>Black Friday cena važi za upitnike poslate do 30. 11. Ističe za <b data-bf="short">00d 00:00:00</b></span></p></div>
+      <div class="fb-head"><b id="fbT">Obezbedite svoje mesto</b><small id="fbS">Traje 20 sekundi. Bez avansa i bez obaveze.</small><p class="fb-urg bf-only"><svg class="ico"><use href="#i-clock"/></svg><span>Black Friday cena važi za upitnike poslate do 30. 11. Ističe za <b data-bf="short">00d 00:00:00</b></span></p></div>
       <div id="formWrap">
         <div class="prog" id="prog" hidden>
           <div class="prog-l"><span id="progTxt">Korak 1 od 3</span><span id="progName">Podaci o biznisu</span></div>
@@ -1924,7 +1924,7 @@ function show(step){
   const lead = step === 1;
   steps.forEach(s => s.hidden = +s.dataset.step !== step);
   document.getElementById('prog').hidden = lead;
-  document.getElementById('fbT').textContent = lead ? 'Prijavite se za svoj sajt' : 'Upitnik za vaš sajt';
+  document.getElementById('fbT').textContent = lead ? 'Obezbedite svoje mesto' : 'Upitnik za vaš sajt';
   document.getElementById('fbS').textContent = lead ? 'Traje 20 sekundi. Bez avansa i bez obaveze.' : 'Još 3 kratka koraka, oko 4 minuta.';
   document.getElementById('lfNote').hidden = !lead;
   if (!lead) {
