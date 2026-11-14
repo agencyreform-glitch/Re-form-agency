@@ -33,7 +33,7 @@ export default async (req) => {
     const { blobs } = await s.list();
     const items = (await Promise.all(blobs.map((b) => s.get(b.key, { type: "json" })))).filter(Boolean);
     items.sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
-    return json({ ok: true, items, statusi: STATUSI });
+    return json({ ok: true, items: items.map(({ token, ...x }) => x), statusi: STATUSI });
   }
 
   if (req.method === "POST") {
@@ -64,7 +64,8 @@ export default async (req) => {
     if (d.kontakt) (lead.kontakti ||= []).push({ t: now, tip: clean(d.kontakt, 20) }); // poziv / wa / mejl
     lead.updatedAt = now;
     await s.setJSON(d.id, lead);
-    return json({ ok: true, item: lead });
+    const { token, ...item } = lead;
+    return json({ ok: true, item });
   }
 
   if (req.method === "DELETE") {
