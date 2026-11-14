@@ -170,7 +170,7 @@ svg text{font:11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:v
     <div class="grid kpis" id="gKpiL"></div>
     <div class="grid two">
       <div class="card"><h2>Dokle stignu na stranici</h2><div id="dSek"></div><p class="help">Broj posetilaca koji su doskrolovali do sekcije. Desno je koliko ih je otpalo u odnosu na sekciju iznad. Ko klikne dugme ka upitniku, preskače sekcije između.</p></div>
-      <div class="card"><h2>Upitnik korak po korak</h2><div id="dForm"></div><p class="help">„Napustili stranicu" znači da su počeli upitnik i zatvorili ili sklonili stranicu pre slanja.</p></div>
+      <div class="card"><h2>Forma i upitnik korak po korak</h2><div id="dForm"></div><p class="help">Korak 1 je kratka forma (ime, telefon, čime se bave): tu nastaje lead. „Napustili stranicu" znači da su počeli i zatvorili ili sklonili stranicu pre nego što su poslali ceo upitnik.</p></div>
     </div>
     <div class="grid two" style="margin-top:12px;align-items:start">
       <div class="card"><h2>Polja u upitniku</h2><div id="dPolja"></div><p class="help">Dotakli = kliknuli u polje. Greška = pokušali dalje sa praznim ili pogrešnim poljem. Izašli posle njega = to je bilo poslednje polje koje su dirali pre nego što su otišli. * obavezno polje.</p></div>
@@ -205,7 +205,10 @@ const ST = [
 ];
 const stName = k => (ST.find(s=>s.k===k)||{n:k||'—'}).n;
 const stCls = k => 'st-' + String(k||'').replace(/\s+/g,'-');
-const LBL = {ime_prezime:'Ime i prezime',telefon:'Telefon',email:'Email',naziv_biznisa:'Biznis',vrsta_biznisa:'Vrsta biznisa',delatnost:'Delatnost',adresa:'Adresa',radno_vreme:'Radno vreme',telefon_za_kupce:'Telefon za kupce',email_za_kupce:'Email za kupce',instagram:'Instagram',facebook:'Facebook',drugi_linkovi:'Drugi linkovi',pib_mb:'PIB/MB',usluge_proizvodi:'Usluge/proizvodi',o_nama:'O nama',stranice:'Stranice',boje:'Boje',logo:'Logo',primer_sajta:'Primer sajta',ima_domen:'Ima domen',domen:'Domen',zeljeni_domen:'Željeni domen',broj_proizvoda:'Broj proizvoda',dostava:'Dostava',placanje:'Plaćanje',meni:'Meni',rezervacije:'Rezervacije',odrzavanje:'Održavanje',salje_slike:'Slike',dostupan_na:'Dostupan na',napomene:'Napomene',paket:'Paket'};
+const upPun = l => l.upitnik ? !!l.upitnik.popunjen : l.izvor==='landing';
+const upTxt = l => !l.upitnik ? '' : (l.upitnik.popunjen ? 'Ceo upitnik poslat' : (l.upitnik.korak>1 ? 'Upitnik nije završen (stao na koraku '+l.upitnik.korak+' od 4)' : 'Samo kontakt, upitnik nije popunjen'));
+const upPill = l => !l.upitnik ? '' : (l.upitnik.popunjen ? '<span class="pill st-kupio">upitnik ✓</span>' : `<span class="pill st-u-radu">${l.upitnik.korak>1?'upitnik '+l.upitnik.korak+'/4':'samo kontakt'}</span>`);
+const LBL = {ime_prezime:'Ime i prezime',telefon:'Telefon',email:'Email',naziv_biznisa:'Biznis',vrsta_biznisa:'Vrsta biznisa',delatnost:'Čime se bavi',adresa:'Adresa',radno_vreme:'Radno vreme',telefon_za_kupce:'Telefon za kupce',email_za_kupce:'Email za kupce',instagram:'Instagram',facebook:'Facebook',drugi_linkovi:'Drugi linkovi',pib_mb:'PIB/MB',usluge_proizvodi:'Usluge/proizvodi',o_nama:'O nama',stranice:'Stranice',boje:'Boje',logo:'Logo',primer_sajta:'Primer sajta',ima_domen:'Ima domen',domen:'Domen',zeljeni_domen:'Željeni domen',broj_proizvoda:'Broj proizvoda',dostava:'Dostava',placanje:'Plaćanje',meni:'Meni',rezervacije:'Rezervacije',odrzavanje:'Održavanje',salje_slike:'Slike',dostupan_na:'Dostupan na',napomene:'Napomene',paket:'Paket'};
 
 const S = { key:'', leads:[], days:[], period:'30', status:'sve', q:'' };
 const $ = id => document.getElementById(id);
@@ -279,14 +282,14 @@ function renderPregled(){
     {l:'Posetioci', v:vis, s:sum('ev','pv')+' prikaza stranice'},
     {l:'Klik „Pozovi"', v:call, s:pct(call,vis)+' posetilaca'},
     {l:'Klik WhatsApp', v:wa, s:pct(wa,vis)+' posetilaca'},
-    {l:'Započeli upitnik', v:fs, s:pct(fs,vis)+' posetilaca'},
-    {l:'Prijave', v:leads.length, s:'konverzija '+pct(leads.length,vis), hl:1},
+    {l:'Počeli formu', v:fs, s:pct(fs,vis)+' posetilaca'},
+    {l:'Prijave', v:leads.length, s:'konverzija '+pct(leads.length,vis)+' · ceo upitnik '+leads.filter(upPun).length, hl:1},
     {l:'Kupili', v:sales.length, s:'zatvoreno '+pct(sales.length,leads.length)+' prijava'},
     {l:'Prihod', v:eur(rev), s: sales.length? 'prosek '+eur(rev/sales.length):'—', hl:1}
   ];
   $('gKpi').innerHTML = K.map(k=>`<div class="card kpi ${k.hl?'hl':''}"><div class="l">${k.l}</div><div class="v">${k.v}</div><div class="s">${k.s}</div></div>`).join('');
 
-  const F = [['Posetioci',vis],['Započeli upitnik',fs],['Prijave',leads.length],['Kupili',sales.length]];
+  const F = [['Posetioci',vis],['Počeli formu',fs],['Prijave',leads.length],['Kupili',sales.length]];
   const mx = Math.max(1, ...F.map(f=>f[1]));
   $('dFunnel').innerHTML = F.map((f,i)=>`<div class="fr"><div class="n">${f[0]}</div><div class="bar"><i style="width:${f[1]/mx*100}%"></i></div><div class="c">${f[1]}<small>${i? pct(f[1], F[i-1][1]) : ''}</small></div></div>`).join('');
 
@@ -343,12 +346,12 @@ const SEKCIJE = [
   ['garancija','Garancija (ručak)'], ['pitanja','Česta pitanja'], ['upitnik','Upitnik'], ['ps','P.S. na dnu']
 ];
 const KORACI = [
-  ['f:vidi','Videli upitnik'], ['form_start','Počeli da popunjavaju'], ['k:2','Prošli korak 1 · Kontakt'],
-  ['k:3','Prošli korak 2 · Biznis'], ['k:4','Prošli korak 3 · Domen i sadržaj'], ['sub:try','Kliknuli „Pošalji"'], ['sub:ok','Uspešno poslali']
+  ['f:vidi','Videli formu'], ['form_start','Počeli da popunjavaju'], ['k:2','Ostavili kontakt (lead)'],
+  ['k:3','Prošli korak 2 · Biznis'], ['k:4','Prošli korak 3 · Domen i sadržaj'], ['sub:try','Kliknuli „Pošalji upitnik"'], ['sub:ok','Poslali ceo upitnik']
 ];
 const POLJA = [
-  [1,'Kontakt podaci',[['ime_prezime','Ime i prezime',1],['telefon','Telefon',1],['dostupan_na','WhatsApp / Viber',0],['email','Email',1]]],
-  [2,'Podaci o biznisu',[['naziv_biznisa','Naziv biznisa',1],['vrsta_biznisa','Vrsta biznisa',1],['paket','Paket',1],['delatnost','Opis delatnosti',1],['adresa','Adresa',0],['radno_vreme','Radno vreme',0],['telefon_za_kupce','Telefon za kupce',0],['email_za_kupce','Email za kupce',0],['instagram','Instagram',0],['facebook','Facebook',0],['drugi_linkovi','Drugi linkovi',0],['pib_mb','PIB i MB',0]]],
+  [1,'Kontakt (kratka forma)',[['ime_prezime','Ime i prezime',1],['telefon','Telefon',1],['delatnost','Čime se bavi',1]]],
+  [2,'Podaci o biznisu',[['email','Email',1],['dostupan_na','WhatsApp / Viber',0],['naziv_biznisa','Naziv biznisa',1],['vrsta_biznisa','Vrsta biznisa',1],['paket','Paket',1],['adresa','Adresa',0],['radno_vreme','Radno vreme',0],['telefon_za_kupce','Telefon za kupce',0],['email_za_kupce','Email za kupce',0],['instagram','Instagram',0],['facebook','Facebook',0],['drugi_linkovi','Drugi linkovi',0],['pib_mb','PIB i MB',0]]],
   [3,'Domen i sadržaj',[['ima_domen','Ima li domen',0],['domen','Domen',0],['zeljeni_domen','Željeni domen',0],['logo','Logo',0],['boje','Boje',0],['primer_sajta','Primer sajta',0],['usluge_proizvodi','Usluge / proizvodi',0],['broj_proizvoda','Broj proizvoda',0],['dostava','Dostava',0],['placanje','Plaćanje',0],['meni','Meni',0],['rezervacije','Rezervacije',0],['o_nama','O nama',0],['stranice','Stranice',0],['odrzavanje','Održavanje',0]]],
   [4,'Slike i potvrda',[['salje_slike','Slike i video',0],['napomene','Napomene',0],['saglasnost_podaci','Saglasnost (podaci)',1],['saglasnost_privatnost','Saglasnost (privatnost)',1]]]
 ];
@@ -394,13 +397,13 @@ function renderLevak(){
   const u = k => lvSum(days, k);
   const vis = u('pv');
   const mob = u('dv:m'), desk = u('dv:d');
-  const fv = u('f:vidi'), fs = u('form_start'), ok = u('sub:ok');
+  const fv = u('f:vidi'), fs = u('form_start'), ok = u('sub:ok'), ld = u('k:2');
   $('gKpiL').innerHTML = [
     {l:'Posetioci', v:vis, s: (mob+desk)? Math.round(mob/(mob+desk)*100)+'% sa telefona' : '—'},
-    {l:'Stigli do upitnika', v:u('s:upitnik'), s:pct(u('s:upitnik'),vis)+' posetilaca'},
-    {l:'Počeli upitnik', v:fs, s:pct(fs,fv)+' od onih koji su ga videli'},
-    {l:'Poslali upitnik', v:ok, s:pct(ok,fs)+' od onih koji su počeli', hl:1},
-    {l:'Odustali usred upitnika', v:Math.max(0,fs-ok), s:pct(Math.max(0,fs-ok),fs)+' od onih koji su počeli'}
+    {l:'Stigli do forme', v:u('s:upitnik'), s:pct(u('s:upitnik'),vis)+' posetilaca'},
+    {l:'Počeli formu', v:fs, s:pct(fs,fv)+' od onih koji su je videli'},
+    {l:'Ostavili kontakt', v:ld, s:pct(ld,fs)+' od onih koji su počeli', hl:1},
+    {l:'Poslali ceo upitnik', v:ok, s:pct(ok,ld)+' od onih koji su ostavili kontakt'}
   ].map(k=>`<div class="card kpi ${k.hl?'hl':''}"><div class="l">${k.l}</div><div class="v">${k.v}</div><div class="s">${k.s}</div></div>`).join('');
 
   if (!vis) {
@@ -415,8 +418,8 @@ function renderLevak(){
   const err = u('sub:err');
   const xk = [1,2,3,4].map(i=>u('xk:'+i));
   $('dForm').innerHTML = lvInsight(kor,'ljudi') + lvRows(kor, kor[0][1] || fs) +
-    `<div class="xk"><span class="sub">Na kom koraku su napustili stranicu:</span>${xk.map((n,i)=>`<span class="pill ${n?'st-nova':'st-odbijeno'}">Korak ${i+1}: ${n}</span>`).join('')}</div>` +
-    (err? `<p class="ins">Slanje nije prošlo ${err} puta (greška servera ili veze). Proveri da li prijave stižu na Telegram.</p>` : '');
+    `<div class="xk"><span class="sub">Na kom koraku su napustili stranicu:</span>${xk.map((n,i)=>`<span class="pill ${n?'st-nova':'st-odbijeno'}">Korak ${i+1}${i?'':' (kontakt)'}: ${n}</span>`).join('')}</div>` +
+    ((err+u('lead:err'))? `<p class="ins">Slanje nije prošlo ${err+u('lead:err')} puta (greška servera ili veze). Proveri da li prijave stižu na Telegram.</p>` : '');
 
   const rows = POLJA.map(([st,nm,fl])=>{
     const head = `<tr class="grp"><td colspan="5">Korak ${st} · ${nm}</td></tr>`;
@@ -444,9 +447,9 @@ function renderPrijave(){
   $('cStatus').innerHTML = [{k:'sve',n:'Sve'},...ST].map(s=>`<button class="chip ${S.status===s.k?'on':''}" data-s="${s.k}">${s.n}<b>${cnt(s.k)}</b></button>`).join('');
   $('cStatus').querySelectorAll('button').forEach(b=>b.onclick=()=>{S.status=b.dataset.s; renderPrijave();});
   const list = S.leads.filter(l => (S.status==='sve'||l.status===S.status) &&
-    (!S.q || [l.ime,l.firma,l.telefon,l.email,l.sajt,l.beleske].join(' ').toLowerCase().includes(S.q)));
+    (!S.q || [l.ime,l.firma,l.telefon,l.email,l.sajt,l.cilj,l.beleske].join(' ').toLowerCase().includes(S.q)));
   $('tLeads').innerHTML = list.length ? `<thead><tr><th>Datum</th><th>Ime / firma</th><th>Telefon</th><th>Paket</th><th>Izvor</th><th>Status</th><th class="num">Vrednost</th></tr></thead><tbody>`+
-    list.map(l=>`<tr class="cl" data-id="${esc(l.id)}"><td class="sub">${fmtD(l.createdAt)}</td><td><b>${esc(l.ime||'—')}</b><div class="sub">${esc(l.firma||l.sajt||'')}</div></td><td>${esc(l.telefon||'')}</td><td>${esc(l.paket||'')}</td><td class="sub">${esc(l.izvor==='ručno'?'ručno':(l.utm_source||l.izvor||'—'))}</td><td><span class="pill ${stCls(l.status)}">${stName(l.status)}</span></td><td class="num">${l.vrednost?eur(l.vrednost):''}</td></tr>`).join('')+'</tbody>'
+    list.map(l=>`<tr class="cl" data-id="${esc(l.id)}"><td class="sub">${fmtD(l.createdAt)}</td><td><b>${esc(l.ime||'—')}</b> ${upPill(l)}<div class="sub">${esc(l.firma||l.sajt||l.cilj||'')}</div></td><td>${esc(l.telefon||'')}</td><td>${esc(l.paket||'')}</td><td class="sub">${esc(l.izvor==='ručno'?'ručno':(l.utm_source||l.izvor||'—'))}</td><td><span class="pill ${stCls(l.status)}">${stName(l.status)}</span></td><td class="num">${l.vrednost?eur(l.vrednost):''}</td></tr>`).join('')+'</tbody>'
     : '<tbody><tr><td class="empty">Nema prijava za ovaj filter.</td></tr></tbody>';
   $('tLeads').querySelectorAll('tr[data-id]').forEach(r=>r.onclick=()=>openLead(r.dataset.id));
 }
@@ -466,7 +469,7 @@ function openLead(id){
   history.replaceState(null,'', l ? '#'+l.id : location.pathname);
   const odg = Object.entries(v.odgovori||{}).filter(([k])=>!['ime_prezime','telefon','email','paket'].includes(k));
   $('dDr').innerHTML = `
-    <div class="top"><div style="flex:1"><h3>${isNew?'Nova prijava (ručno)':esc(v.ime||'Bez imena')}</h3><div class="sub">${isNew?'Npr. neko je pozvao direktno':esc((v.firma||'')+(v.createdAt?' · '+fmtD(v.createdAt):''))}</div></div><button class="ic" id="bX">✕</button></div>
+    <div class="top"><div style="flex:1"><h3>${isNew?'Nova prijava (ručno)':esc(v.ime||'Bez imena')}</h3><div class="sub">${isNew?'Npr. neko je pozvao direktno':esc((v.firma||v.cilj||'')+(v.createdAt?' · '+fmtD(v.createdAt):''))}</div>${!isNew&&v.upitnik?`<div style="margin-top:6px">${upPill(v)} <span class="sub">${esc(upTxt(v))}</span></div>`:''}</div><button class="ic" id="bX">✕</button></div>
     <div class="body">
       ${isNew?'':`<div class="row">
         ${v.telefon?`<a class="btn sm" href="tel:${esc(v.telefon)}" data-k="poziv">📞 Pozovi</a><a class="btn sm ghost" href="${waLink(v.telefon)}" target="_blank" data-k="wa">WhatsApp</a>`:''}
@@ -486,6 +489,7 @@ function openLead(id){
       ${odg.length?`<div class="card"><h2>Odgovori iz upitnika</h2><dl class="kv">${odg.map(([k,x])=>`<dt>${esc(LBL[k]||k)}</dt><dd>${esc(Array.isArray(x)?x.join(', '):x)}</dd>`).join('')}</dl></div>`:''}
       ${isNew?'':`<div class="card"><h2>Istorija</h2><div class="hist">
         <div>${fmtD(v.createdAt)} · prijava (${esc(v.izvor==='ručno'?'ručno':(v.utm_source||v.izvor||'sajt'))}${v.utm_campaign?' · '+esc(v.utm_campaign):''})</div>
+        ${v.upitnikAt?`<div>${fmtD(v.upitnikAt)} · poslat ceo upitnik</div>`:''}
         ${(v.istorija||[]).slice(1).map(h=>`<div>${fmtD(h.t)} · status → ${stName(h.s)}</div>`).join('')}
         ${(v.kontakti||[]).map(h=>`<div>${fmtD(h.t)} · kontakt: ${esc(h.tip)}</div>`).join('')}
       </div></div>`}

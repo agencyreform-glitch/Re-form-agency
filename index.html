@@ -1335,6 +1335,12 @@ select.inp{min-height:54px}
 .ftr-c{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 10px;margin:0 0 8px;font-weight:600}
 .ftr-c a{color:inherit;text-decoration:none}
 .ftr-c span{opacity:.4}
+/* Kratka lead forma pre upitnika */
+.lf-note{font-size:13px;color:var(--muted);font-weight:500;margin-top:12px;text-align:center;line-height:1.45}
+.lf-note a{color:inherit;text-decoration:underline}
+.lead-ok{display:flex;gap:12px;align-items:flex-start;background:#ECFDF3;border:1px solid #ABEFC6;color:#05603A;border-radius:12px;padding:13px 15px;margin-bottom:18px;font-size:15px;line-height:1.45}
+.lead-ok svg{flex:none;width:20px;height:20px;margin-top:2px;stroke-width:3}
+.lead-ok b{display:block;color:#054F31}
 </style>
 </head>
 <body>
@@ -1729,34 +1735,36 @@ select.inp{min-height:54px}
   <div class="col">
     <p class="pre">Još samo ovo...</p>
     <h2 class="headline" style="margin-top:10px">Vreme je da vaš biznis dobije sajt koji zaslužuje.</h2>
-    <p class="subhead">Popunite kratak upitnik i prepustite nama ostatak posla.</p>
+    <p class="subhead">Ostavite ime i broj telefona. Ostatak posla je na nama.</p>
 
     <div class="form-box">
-      <div class="fb-head"><b>Upitnik za vaš sajt</b><small>Oko 5 minuta. Bez avansa i bez obaveze.</small><p class="fb-urg bf-only"><svg class="ico"><use href="#i-clock"/></svg><span>Black Friday cena važi za upitnike poslate do 30. 11. Ističe za <b data-bf="short">00d 00:00:00</b></span></p></div>
+      <div class="fb-head"><b id="fbT">Prijavite se za svoj sajt</b><small id="fbS">Traje 20 sekundi. Bez avansa i bez obaveze.</small><p class="fb-urg bf-only"><svg class="ico"><use href="#i-clock"/></svg><span>Black Friday cena važi za upitnike poslate do 30. 11. Ističe za <b data-bf="short">00d 00:00:00</b></span></p></div>
       <div id="formWrap">
-        <div class="prog">
-          <div class="prog-l"><span id="progTxt">Korak 1 od 4</span><span id="progName">Kontakt podaci</span></div>
-          <div class="prog-bar"><i id="progBar" style="width:25%"></i></div>
-          <ol class="snav" aria-hidden="true"><li class="on"><b>1</b><span>Kontakt podaci</span></li><li><b>2</b><span>Podaci o biznisu</span></li><li><b>3</b><span>Domen i sadržaj</span></li><li><b>4</b><span>Slike i potvrda</span></li></ol>
+        <div class="prog" id="prog" hidden>
+          <div class="prog-l"><span id="progTxt">Korak 1 od 3</span><span id="progName">Podaci o biznisu</span></div>
+          <div class="prog-bar"><i id="progBar" style="width:33%"></i></div>
+          <ol class="snav" aria-hidden="true"><li class="on"><b>1</b><span>Podaci o biznisu</span></li><li><b>2</b><span>Domen i sadržaj</span></li><li><b>3</b><span>Slike i potvrda</span></li></ol>
         </div>
         <form id="leadForm" class="fb-body" novalidate>
-          <!-- KORAK 1 -->
+          <!-- KORAK 1: kratka lead forma -->
           <div class="fstep" data-step="1">
             <div class="fgrid two">
               <div class="field"><label for="f-ime">Ime i prezime <span class="rq">*</span></label><input class="inp" id="f-ime" name="ime_prezime" type="text" required autocomplete="name"><span class="ferr">Unesite ime i prezime.</span></div>
               <div class="field"><label for="f-tel">Broj telefona <span class="rq">*</span></label><input class="inp" id="f-tel" name="telefon" type="tel" required autocomplete="tel" inputmode="tel"><small class="hint">npr. 064 123 4567</small><span class="ferr">Unesite ispravan broj telefona.</span></div>
-              <fieldset class="field f-full"><legend>Dostupni ste na</legend><div class="chks"><label class="chk"><input type="checkbox" name="dostupan_na" value="WhatsApp" checked><span>WhatsApp</span></label><label class="chk"><input type="checkbox" name="dostupan_na" value="Viber"><span>Viber</span></label></div></fieldset>
-              <div class="field f-full"><label for="f-email">Email adresa <span class="rq">*</span></label><input class="inp" id="f-email" name="email" type="email" required autocomplete="email" inputmode="email"><span class="ferr">Unesite ispravnu email adresu.</span></div>
+              <div class="field f-full"><label for="f-del">Čime se bavite? <span class="rq">*</span></label><input class="inp" id="f-del" name="delatnost" type="text" required placeholder="npr. frizerski salon u Kruševcu"><span class="ferr">Napišite ukratko čime se bavite.</span></div>
             </div>
+            <div class="f-alert err" id="lErr" role="alert"><svg class="ico"><use href="#i-alert"/></svg><span>Slanje nije uspelo. Pokušajte ponovo ili nam pišite na WhatsApp.</span></div>
           </div>
 
           <!-- KORAK 2 -->
           <div class="fstep" data-step="2" hidden>
+            <div class="lead-ok" id="leadOk" role="status" tabindex="-1"><svg class="ico"><use href="#i-check"/></svg><span><b>Primili smo vaš broj<span id="leadIme"></span>.</b>Javićemo vam se. A ako sada popunite i ostatak, odmah krećemo sa izradom sajta.</span></div>
             <div class="fgrid two">
+              <div class="field f-full"><label for="f-email">Email adresa <span class="rq">*</span></label><input class="inp" id="f-email" name="email" type="email" required autocomplete="email" inputmode="email"><span class="ferr">Unesite ispravnu email adresu.</span></div>
+              <fieldset class="field f-full"><legend>Dostupni ste na</legend><div class="chks"><label class="chk"><input type="checkbox" name="dostupan_na" value="WhatsApp" checked><span>WhatsApp</span></label><label class="chk"><input type="checkbox" name="dostupan_na" value="Viber"><span>Viber</span></label></div></fieldset>
               <div class="field"><label for="f-biz">Naziv firme / biznisa <span class="rq">*</span></label><input class="inp" id="f-biz" name="naziv_biznisa" type="text" required autocomplete="organization"><span class="ferr">Unesite naziv biznisa.</span></div>
               <div class="field"><label for="f-vrsta">Vrsta biznisa <span class="rq">*</span></label><select class="inp" id="f-vrsta" name="vrsta_biznisa" required><option value="">Izaberite…</option><option value="Lepota i nega">Lepota i nega</option><option value="Zdravlje i ordinacije">Zdravlje i ordinacije</option><option value="Ugostiteljstvo (restoran, kafić)">Ugostiteljstvo (restoran, kafić)</option><option value="Hrana i poslastice">Hrana i poslastice</option><option value="Smeštaj i turizam">Smeštaj i turizam</option><option value="Prodavnica / butik">Prodavnica / butik</option><option value="Servisi i popravke">Servisi i popravke</option><option value="Gradnja i zanati">Gradnja i zanati</option><option value="Transport i selidbe">Transport i selidbe</option><option value="Proslave i događaji">Proslave i događaji</option><option value="Sport i fitnes">Sport i fitnes</option><option value="Obrazovanje i kursevi">Obrazovanje i kursevi</option><option value="Agencije i usluge">Agencije i usluge</option><option value="Lični brend i portfolio">Lični brend i portfolio</option><option value="Industrija i proizvodnja">Industrija i proizvodnja</option><option value="Nešto drugo">Nešto drugo</option></select><span class="ferr">Izaberite vrstu biznisa.</span></div>
               <div class="field f-full"><label for="f-paket">Koji paket vas zanima? <span class="rq">*</span></label><select class="inp" id="f-paket" name="paket" required><option value="">Izaberite paket</option><option value="START">START, 199 €</option><option value="BUSINESS">BUSINESS, 299 €</option><option value="SHOP">SHOP, 499 €</option><option value="NISAM SIGURAN">Nisam siguran, posavetujte me</option></select><span class="ferr">Izaberite paket.</span></div>
-              <div class="field f-full"><label for="f-del">Kratak opis delatnosti, čime se bavite <span class="rq">*</span></label><textarea class="inp" id="f-del" name="delatnost" rows="3" required placeholder="Npr. stomatološka ordinacija u Novom Sadu, radimo implante i estetiku zuba"></textarea><span class="ferr">Napišite ukratko čime se bavite.</span></div>
               <div class="field f-full"><label for="f-adr">Adresa poslovanja (ulica, broj, grad)</label><input class="inp" id="f-adr" name="adresa" type="text" autocomplete="street-address"></div>
               <div class="field f-full"><label for="f-rv">Radno vreme (po danima)</label><input class="inp" id="f-rv" name="radno_vreme" type="text"><small class="hint">npr. Pon-Pet 9-20h, Sub 9-15h, Ned zatvoreno</small></div>
               <div class="field"><label for="f-ktel">Telefon za kupce koji ide na sajt</label><input class="inp" id="f-ktel" name="telefon_za_kupce" type="tel" inputmode="tel"><small class="hint">Ako je drugačiji od vašeg</small></div>
@@ -1807,7 +1815,7 @@ select.inp{min-height:54px}
               <label class="chk blk"><input type="checkbox" name="salje_slike" value="Da"><span>Poslaću slike i video posle upitnika</span></label>
               <div class="field f-full"><label for="f-nap">Dodatne napomene i želje</label><textarea class="inp" id="f-nap" name="napomene" rows="4"></textarea></div>
               <div class="field"><label class="chk blk req"><input type="checkbox" id="f-sag1" name="saglasnost_podaci" value="Da"><span>Saglasan/na sam da se moji podaci koriste za izradu sajta. <span class="rq">*</span></span></label><span class="ferr">Potrebna je vaša saglasnost.</span></div>
-              <div class="field"><label class="chk blk req"><input type="checkbox" id="f-sag2" name="saglasnost_privatnost" value="Da"><span>Saglasan/na sam sa <!-- INTEGRACIJA: link do politike privatnosti --><a href="#" target="_blank" rel="noopener">politikom privatnosti</a>. <span class="rq">*</span></span></label><span class="ferr">Potrebna je vaša saglasnost.</span></div>
+              <div class="field"><label class="chk blk req"><input type="checkbox" id="f-sag2" name="saglasnost_privatnost" value="Da"><span>Saglasan/na sam sa <a href="/privatnost" target="_blank" rel="noopener">politikom privatnosti</a>. <span class="rq">*</span></span></label><span class="ferr">Potrebna je vaša saglasnost.</span></div>
             </div>
             <input type="text" name="website_hp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
             <div class="f-alert err" id="fErr" role="alert"><svg class="ico"><use href="#i-alert"/></svg><span>Slanje nije uspelo. Pokušajte ponovo ili nam pišite na WhatsApp.</span></div>
@@ -1816,9 +1824,10 @@ select.inp{min-height:54px}
 
           <div class="fnav">
             <button class="back" type="button" id="fPrev" hidden>Nazad</button>
-            <button class="cta" type="button" id="fNext"><b>DALJE <svg class="ico"><use href="#i-arrow"/></svg></b></button>
+            <button class="cta" type="button" id="fNext"><b>ŽELIM SVOJ SAJT <svg class="ico"><use href="#i-arrow"/></svg></b><small>Plaćate tek kad vidite gotov sajt</small></button>
             <button class="cta" type="submit" id="fBtn" hidden><b>POŠALJI UPITNIK <svg class="ico"><use href="#i-arrow"/></svg></b><small>Plaćam tek kad vidim gotov sajt</small></button>
           </div>
+          <p class="lf-note" id="lfNote">Slanjem pristajete da vas kontaktiramo u vezi sa izradom sajta. <a href="/privatnost" target="_blank" rel="noopener">Politika privatnosti</a></p>
           <p class="req-note">Polja označena <span class="rq">*</span> su obavezna.</p>
           <p class="secure"><svg class="ico"><use href="#i-lock"/></svg>Vaši podaci su sigurni. Koristimo ih samo za izradu vašeg sajta.</p>
         </form>
@@ -1879,20 +1888,24 @@ document.querySelectorAll('.chip').forEach(chip => chip.addEventListener('click'
   new IntersectionObserver(e => { f = e[0].isIntersecting; upd(); }, { threshold: .05 }).observe(form);
 })();
 
-/* Forma u 4 koraka */
+/* Forma: kratka lead forma (korak 1), pa ostatak upitnika (koraci 2-4) */
 const rfT = k => { try { if (window.rfTrack) window.rfTrack(k); } catch(_){} };
 const form = document.getElementById('leadForm');
 const steps = [...form.querySelectorAll('.fstep')];
-const NAMES = ['Kontakt podaci','Podaci o biznisu','Domen i sadržaj','Slike i potvrda'];
-const fErr = document.getElementById('fErr'), fDev = document.getElementById('fDev'), fBtn = document.getElementById('fBtn');
+const NAMES = ['Kontakt','Podaci o biznisu','Domen i sadržaj','Slike i potvrda'];
+const fErr = document.getElementById('fErr'), fDev = document.getElementById('fDev'), fBtn = document.getElementById('fBtn'), lErr = document.getElementById('lErr');
 const fNext = document.getElementById('fNext'), fPrev = document.getElementById('fPrev');
 const paketSel = document.getElementById('f-paket'), vrstaSel = document.getElementById('f-vrsta');
-let cur = 1;
+const NEXT_HTML = { lead: fNext.innerHTML, dalje: '<b>DALJE <svg class="ico"><use href="#i-arrow"/></svg></b>' };
+let cur = 1, DONE = false;
+/* lead koji je napravljen posle kratke forme: id + token za dopunu istog zapisa */
+let LEAD = null;
+try { LEAD = JSON.parse(sessionStorage.getItem('rf_lead') || 'null'); } catch(_){}
 function setErr(el){ el.closest('.field').classList.add('invalid'); el.setAttribute('aria-invalid','true'); }
 function clearErr(el){ const f = el.closest('.field'); if (f) f.classList.remove('invalid'); el.removeAttribute('aria-invalid'); }
 const rules = {
-  1: { 'f-ime': v => v.trim().length >= 3, 'f-tel': v => v.replace(/[^\d+]/g,'').replace(/^\+/,'').length >= 8, 'f-email': v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()) },
-  2: { 'f-biz': v => v.trim().length >= 2, 'f-vrsta': v => v !== '', 'f-paket': v => v !== '', 'f-del': v => v.trim().length >= 3 },
+  1: { 'f-ime': v => v.trim().length >= 3, 'f-tel': v => v.replace(/[^\d+]/g,'').replace(/^\+/,'').length >= 8, 'f-del': v => v.trim().length >= 3 },
+  2: { 'f-email': v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()), 'f-biz': v => v.trim().length >= 2, 'f-vrsta': v => v !== '', 'f-paket': v => v !== '' },
   3: {},
   4: { 'f-sag1': (v, el) => el.checked, 'f-sag2': (v, el) => el.checked }
 };
@@ -1908,15 +1921,82 @@ function check(step){
 }
 function show(step){
   cur = step;
+  const lead = step === 1;
   steps.forEach(s => s.hidden = +s.dataset.step !== step);
-  document.getElementById('progTxt').textContent = 'Korak ' + step + ' od 4';
-  document.getElementById('progName').textContent = NAMES[step-1];
-  document.getElementById('progBar').style.width = (step * 25) + '%';
-  document.querySelectorAll('.snav li').forEach((li, i) => { li.classList.toggle('on', i + 1 === step); li.classList.toggle('done', i + 1 < step); });
-  fPrev.hidden = step === 1; fNext.hidden = step === 4; fBtn.hidden = step !== 4;
+  document.getElementById('prog').hidden = lead;
+  document.getElementById('fbT').textContent = lead ? 'Prijavite se za svoj sajt' : 'Upitnik za vaš sajt';
+  document.getElementById('fbS').textContent = lead ? 'Traje 20 sekundi. Bez avansa i bez obaveze.' : 'Još 3 kratka koraka, oko 4 minuta.';
+  document.getElementById('lfNote').hidden = !lead;
+  if (!lead) {
+    document.getElementById('progTxt').textContent = 'Korak ' + (step - 1) + ' od 3';
+    document.getElementById('progName').textContent = NAMES[step-1];
+    document.getElementById('progBar').style.width = Math.round((step - 1) / 3 * 100) + '%';
+    document.querySelectorAll('.snav li').forEach((li, i) => { li.classList.toggle('on', i + 2 === step); li.classList.toggle('done', i + 2 < step); });
+  }
+  fNext.innerHTML = lead ? NEXT_HTML.lead : NEXT_HTML.dalje;
+  fPrev.hidden = step <= 2; fNext.hidden = step === 4; fBtn.hidden = step !== 4;
   document.getElementById('upitnik').querySelector('.form-box').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
-fNext.addEventListener('click', () => { if (check(cur)) { show(cur + 1); rfT('k:' + cur); } /* INTEGRACIJA: ovde može da se pošalje delimični lead posle koraka 1 */ });
+
+/* svi trenutni odgovori iz forme */
+function collect(faza){
+  const fd = new FormData(form);
+  fd.delete('website_hp');
+  const data = {};
+  for (const [k, v] of fd.entries()) { if (v === '') continue; data[k] = k in data ? [].concat(data[k], v) : v; }
+  if (data.ima_domen === 'Da') delete data.zeljeni_domen; else delete data.domen;
+  if (document.getElementById('condShop').hidden) { delete data.broj_proizvoda; delete data.dostava; delete data.placanje; }
+  if (document.getElementById('condFood').hidden) { delete data.meni; delete data.rezervacije; }
+  data.izvor = 'landing'; try { const T = window.RF_T || {}; data._vid = T.vid || ''; data._src = T.src || ''; data._cmp = T.cmp || ''; } catch(_){}
+  data.stranica = location.href; data.vreme = new Date().toISOString();
+  data._faza = faza; data._korak = cur;
+  if (LEAD) { data._id = LEAD.id; data._tok = LEAD.tok; }
+  return data;
+}
+/* tiho čuvanje usput (između koraka i kad zatvore stranicu) */
+function saveQuiet(beacon){
+  if (!LEAD || DONE || !CONFIG.WEBHOOK_URL) return;
+  const body = JSON.stringify(collect('korak'));
+  try {
+    if (beacon && navigator.sendBeacon && navigator.sendBeacon(CONFIG.WEBHOOK_URL, new Blob([body], { type: 'text/plain' }))) return;
+    fetch(CONFIG.WEBHOOK_URL, { method: 'POST', body, keepalive: true, headers: { 'Content-Type': 'application/json' } }).catch(() => {});
+  } catch(_){}
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') saveQuiet(true); });
+window.addEventListener('pagehide', () => saveQuiet(true));
+
+/* korak 1: kratka forma pravi lead (Telegram + CRM), pa vodi na ostatak upitnika */
+async function sendLead(){
+  lErr.classList.remove('show');
+  if (!check(1)) return;
+  if (form.website_hp && form.website_hp.value) return;
+  const ime = document.getElementById('f-ime').value.trim().split(/\s+/)[0];
+  const next = () => {
+    document.getElementById('leadIme').textContent = ime ? ', ' + ime : '';
+    show(2); rfT('k:2');
+    setTimeout(() => { try { document.getElementById('leadOk').focus({ preventScroll: true }); } catch(_){} }, 50);
+  };
+  if (!CONFIG.WEBHOOK_URL) { fDev.classList.add('show'); next(); return; }
+  fNext.classList.add('btn-loading');
+  try {
+    const res = await fetch(CONFIG.WEBHOOK_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(collect('kontakt')) });
+    const j = await res.json().catch(() => ({}));
+    if (!res.ok || !j.ok) throw new Error('HTTP ' + res.status);
+    /* novi lead dobija token; ako je već postojao (osvežena stranica), samo je dopunjen */
+    if (j.id && j.tok) {
+      LEAD = { id: j.id, tok: j.tok }; try { sessionStorage.setItem('rf_lead', JSON.stringify(LEAD)); } catch(_){}
+      if (typeof window.fbq === 'function') window.fbq('track', 'Lead', { content_name: paketSel.value || 'kontakt' });
+    }
+    rfT('lead:ok');
+    next();
+  } catch (err) { console.error('[Forma] Greška pri slanju kontakta:', err); rfT('lead:err'); lErr.classList.add('show'); }
+  finally { fNext.classList.remove('btn-loading'); }
+}
+
+fNext.addEventListener('click', () => {
+  if (cur === 1) { sendLead(); return; }
+  if (check(cur)) { show(cur + 1); rfT('k:' + cur); saveQuiet(false); }
+});
 fPrev.addEventListener('click', () => show(cur - 1));
 
 /* Paket iz cenovnika ide u formu */
@@ -1934,21 +2014,15 @@ document.querySelectorAll('input[name="ima_domen"]').forEach(r => r.addEventList
   document.getElementById('domYes').hidden = !da; document.getElementById('domNo').hidden = da;
 }));
 
+/* korak 4: ceo upitnik dopunjuje isti lead */
 form.addEventListener('submit', async e => {
   e.preventDefault();
   if (cur !== 4) { fNext.click(); return; }
   fErr.classList.remove('show'); fDev.classList.remove('show');
   rfT('sub:try');
   if (!check(4)) return;
-  const fd = new FormData(form);
-  if (fd.get('website_hp')) return;
-  fd.delete('website_hp');
-  const data = {};
-  for (const [k, v] of fd.entries()) { if (v === '') continue; data[k] = k in data ? [].concat(data[k], v) : v; }
-  if (data.ima_domen === 'Da') delete data.zeljeni_domen; else delete data.domen;
-  if (document.getElementById('condShop').hidden) { delete data.broj_proizvoda; delete data.dostava; delete data.placanje; }
-  if (document.getElementById('condFood').hidden) { delete data.meni; delete data.rezervacije; }
-  data.izvor = 'landing'; try { const T = window.RF_T || {}; data._vid = T.vid || ''; data._src = T.src || ''; data._cmp = T.cmp || ''; } catch(_){} data.stranica = location.href; data.vreme = new Date().toISOString();
+  if (form.website_hp && form.website_hp.value) return;
+  const data = collect('kraj');
 
   if (!CONFIG.WEBHOOK_URL) { console.warn('[Forma] WEBHOOK_URL nije podešen. Podaci NISU poslati:', data); fDev.classList.add('show'); return; }
 
@@ -1956,7 +2030,9 @@ form.addEventListener('submit', async e => {
   try {
     const res = await fetch(CONFIG.WEBHOOK_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data) });
     if (!res.ok) throw new Error('HTTP ' + res.status);
-    if (typeof window.fbq === 'function') { window.fbq('track', 'Lead', { content_name: data.paket }); window.fbq('track', 'CompleteRegistration', { content_name: data.paket }); }
+    DONE = true;
+    try { sessionStorage.removeItem('rf_lead'); } catch(_){}
+    if (typeof window.fbq === 'function') window.fbq('track', 'CompleteRegistration', { content_name: data.paket });
     rfT('sub:ok');
     document.getElementById('formWrap').hidden = true;
     const ok = document.getElementById('fOk'); ok.classList.add('show'); ok.focus();
@@ -2056,7 +2132,7 @@ document.addEventListener('click', e => {
 
   var live = location.hostname.indexOf('claude') < 0;
   var sent = {}, queue = [], timer = null, fs = false, done = false, lastF = '';
-  var NOW = { pv: 1, call: 1, wa: 1, 'sub:ok': 1, 'sub:err': 1 };
+  var NOW = { pv: 1, call: 1, wa: 1, 'lead:ok': 1, 'lead:err': 1, 'sub:ok': 1, 'sub:err': 1 };
 
   function flush(){
     if (timer) { clearTimeout(timer); timer = null; }
