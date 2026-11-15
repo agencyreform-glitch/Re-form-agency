@@ -1342,15 +1342,16 @@ select.inp{min-height:54px}
 .lead-ok svg{flex:none;width:20px;height:20px;margin-top:2px;stroke-width:3}
 .lead-ok b{display:block;color:#054F31}
 
-.fproof{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line);text-align:center}
-.fp-stars{display:flex;gap:3px}
-.fp-stars svg{width:20px;height:20px;fill:#FFB400}
-.fp-txt{font-size:14px;line-height:1.4;color:var(--muted);font-weight:500}
-.fp-txt b{color:var(--ink);font-weight:800}
+.fproof{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 10px;margin-top:12px;text-align:center}
+.fp-stars{display:flex;gap:2px}
+.fp-stars svg{width:18px;height:18px;fill:#FFB400}
+.fp-txt{font-size:14.5px;line-height:1.3;color:var(--ink)}
+.fp-txt b{font-weight:800}
+#leadForm.s1 .fnav .cta{width:100%;margin:0;min-width:0}
 /* ===== POPUP UPITNIK ===== */
 .rfm{position:fixed;inset:0;z-index:200;display:none;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;background:rgba(14,14,16,.78);padding:clamp(16px,5vh,48px) 16px}
-.rfm.open{display:block;animation:rfmIn .2s ease}
-.rfm-box{position:relative;max-width:760px;margin:0 auto;outline:0;animation:rfmUp .25s ease}
+.rfm.open{display:flex;flex-direction:column;animation:rfmIn .2s ease}
+.rfm-box{position:relative;width:100%;max-width:760px;margin:auto;outline:0;animation:rfmUp .25s ease}
 .rfm .form-box{margin:0}
 .rfm .fb-head{padding-right:68px}
 .rfm-x{position:absolute;top:14px;right:14px;z-index:5;width:42px;height:42px;border-radius:50%;border:0;background:#F2F0EE;color:#0E0E10;display:grid;place-items:center;cursor:pointer;transition:background .15s}
@@ -1362,11 +1363,31 @@ select.inp{min-height:54px}
 @keyframes rfmIn{from{opacity:0}to{opacity:1}}
 @keyframes rfmUp{from{transform:translateY(18px)}to{transform:none}}
 @media(max-width:640px){
- .rfm{padding:0;background:#fff}
- .rfm-box{max-width:none;min-height:100%}
- .rfm .form-box{border-radius:0;box-shadow:none;min-height:100vh;min-height:100dvh}
- .rfm-x{position:fixed;top:10px;right:10px;box-shadow:0 4px 14px rgba(0,0,0,.18);background:#fff}
- .rfm .fb-head{padding-right:62px}
+ .rfm{padding:12px 10px}
+ .rfm .form-box{border-radius:18px}
+ .rfm-x{top:10px;right:10px;width:38px;height:38px}
+ .rfm .fb-head{padding:16px 62px 12px 18px}
+ .rfm .fb-head b{font-size:24px;line-height:1.1}
+ .rfm .fb-head small{font-size:13.5px}
+ .rfm .fb-urg,.rfm .fb-head .fb-urg b{font-size:12.5px}
+ .rfm .fb-urg{margin-top:8px;padding:6px 10px}
+ .rfm .fb-body{padding:16px 18px 20px}
+ .rfm .fgrid{gap:12px}
+ .rfm #leadForm.s1 .fgrid.two{grid-template-columns:1fr 1fr}
+ .rfm #leadForm.s1 .f-full{grid-column:1/-1}
+ .rfm .inp{min-height:50px;padding:11px 13px;font-size:16px}
+ .rfm #leadForm.s1 .fnav{margin-top:16px}
+}
+@media(max-width:640px) and (max-height:620px){
+ .rfm{padding:6px}
+ .rfm .fb-head{padding-top:12px;padding-bottom:10px}
+ .rfm .fb-head b{font-size:22px}
+ .rfm .fb-body{padding-top:12px;padding-bottom:14px}
+ .rfm .fgrid{gap:10px}
+ .rfm .field{gap:4px}
+ .rfm .inp{min-height:46px;padding:9px 12px}
+ .rfm #leadForm.s1 .fnav{margin-top:12px}
+ .rfm .fproof{margin-top:8px}
 }
 @media(prefers-reduced-motion:reduce){.rfm.open,.rfm-box{animation:none}}
 </style>
@@ -1800,12 +1821,12 @@ select.inp{min-height:54px}
           <div class="prog-bar"><i id="progBar" style="width:33%"></i></div>
           <ol class="snav" aria-hidden="true"><li class="on"><b>1</b><span>Podaci o biznisu</span></li><li><b>2</b><span>Domen i sadržaj</span></li><li><b>3</b><span>Slike i potvrda</span></li></ol>
         </div>
-        <form id="leadForm" class="fb-body" novalidate>
+        <form id="leadForm" class="fb-body s1" novalidate>
           <!-- KORAK 1: kratka lead forma -->
           <div class="fstep" data-step="1">
             <div class="fgrid two">
-              <div class="field"><label for="f-ime">Ime i prezime <span class="rq">*</span></label><input class="inp" id="f-ime" name="ime_prezime" type="text" required autocomplete="name"><span class="ferr">Unesite ime i prezime.</span></div>
-              <div class="field"><label for="f-tel">Broj telefona <span class="rq">*</span></label><input class="inp" id="f-tel" name="telefon" type="tel" required autocomplete="tel" inputmode="tel"><small class="hint">npr. 064 123 4567</small><span class="ferr">Unesite ispravan broj telefona.</span></div>
+              <div class="field"><label for="f-ime">Ime <span class="rq">*</span></label><input class="inp" id="f-ime" name="ime_prezime" type="text" required autocomplete="given-name"><span class="ferr">Unesite ime.</span></div>
+              <div class="field"><label for="f-tel">Broj telefona <span class="rq">*</span></label><input class="inp" id="f-tel" name="telefon" type="tel" required autocomplete="tel" inputmode="tel" placeholder="npr. 064 123 4567"><span class="ferr">Unesite ispravan broj telefona.</span></div>
               <div class="field f-full"><label for="f-del">Čime se bavite? <span class="rq">*</span></label><input class="inp" id="f-del" name="delatnost" type="text" required placeholder="npr. frizerski salon u Kruševcu"><span class="ferr">Napišite ukratko čime se bavite.</span></div>
             </div>
             <div class="f-alert err" id="lErr" role="alert"><svg class="ico"><use href="#i-alert"/></svg><span>Slanje nije uspelo. Pokušajte ponovo ili nam pišite na WhatsApp.</span></div>
@@ -1884,7 +1905,7 @@ select.inp{min-height:54px}
           </div>
           <div class="fproof">
             <span class="fp-stars" role="img" aria-label="5 od 5 zvezdica"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg></span>
-            <span class="fp-txt"><b>50+ završenih sajtova</b> za salone, ordinacije, restorane i radnje</span>
+            <span class="fp-txt"><b>50+ završenih sajtova</b></span>
           </div>
         </form>
       </div>
@@ -1943,7 +1964,7 @@ try { LEAD = JSON.parse(sessionStorage.getItem('rf_lead') || 'null'); } catch(_)
 function setErr(el){ el.closest('.field').classList.add('invalid'); el.setAttribute('aria-invalid','true'); }
 function clearErr(el){ const f = el.closest('.field'); if (f) f.classList.remove('invalid'); el.removeAttribute('aria-invalid'); }
 const rules = {
-  1: { 'f-ime': v => v.trim().length >= 3, 'f-tel': v => v.replace(/[^\d+]/g,'').replace(/^\+/,'').length >= 8, 'f-del': v => v.trim().length >= 3 },
+  1: { 'f-ime': v => v.trim().length >= 2, 'f-tel': v => v.replace(/[^\d+]/g,'').replace(/^\+/,'').length >= 8, 'f-del': v => v.trim().length >= 3 },
   2: { 'f-email': v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()), 'f-biz': v => v.trim().length >= 2, 'f-vrsta': v => v !== '', 'f-paket': v => v !== '' },
   3: {},
   4: { 'f-sag1': (v, el) => el.checked, 'f-sag2': (v, el) => el.checked }
@@ -1963,6 +1984,7 @@ function show(step){
   const lead = step === 1;
   steps.forEach(s => s.hidden = +s.dataset.step !== step);
   document.getElementById('prog').hidden = lead;
+  form.classList.toggle('s1', lead);
   document.getElementById('fbT').textContent = lead ? 'Obezbedite svoje mesto' : 'Upitnik za vaš sajt';
   document.getElementById('fbS').textContent = lead ? 'Traje 20 sekundi. Bez avansa i bez obaveze.' : 'Još 3 kratka koraka, oko 4 minuta.';
   if (!lead) {
