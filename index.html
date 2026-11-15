@@ -1341,6 +1341,29 @@ select.inp{min-height:54px}
 .lead-ok{display:flex;gap:12px;align-items:flex-start;background:#ECFDF3;border:1px solid #ABEFC6;color:#05603A;border-radius:12px;padding:13px 15px;margin-bottom:18px;font-size:15px;line-height:1.45}
 .lead-ok svg{flex:none;width:20px;height:20px;margin-top:2px;stroke-width:3}
 .lead-ok b{display:block;color:#054F31}
+
+/* ===== POPUP UPITNIK ===== */
+.rfm{position:fixed;inset:0;z-index:200;display:none;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;background:rgba(14,14,16,.78);padding:clamp(16px,5vh,48px) 16px}
+.rfm.open{display:block;animation:rfmIn .2s ease}
+.rfm-box{position:relative;max-width:760px;margin:0 auto;outline:0;animation:rfmUp .25s ease}
+.rfm .form-box{margin:0}
+.rfm .fb-head{padding-right:68px}
+.rfm-x{position:absolute;top:14px;right:14px;z-index:5;width:42px;height:42px;border-radius:50%;border:0;background:#F2F0EE;color:#0E0E10;display:grid;place-items:center;cursor:pointer;transition:background .15s}
+.rfm-x:hover{background:#E6E2DF}
+.rfm-x svg{width:20px;height:20px}
+.rfm-lock,.rfm-lock body{overflow:hidden}
+.rfm-lock .mcta{visibility:hidden}
+.up-cta{margin-top:30px}
+@keyframes rfmIn{from{opacity:0}to{opacity:1}}
+@keyframes rfmUp{from{transform:translateY(18px)}to{transform:none}}
+@media(max-width:640px){
+ .rfm{padding:0;background:#fff}
+ .rfm-box{max-width:none;min-height:100%}
+ .rfm .form-box{border-radius:0;box-shadow:none;min-height:100vh;min-height:100dvh}
+ .rfm-x{position:fixed;top:10px;right:10px;box-shadow:0 4px 14px rgba(0,0,0,.18);background:#fff}
+ .rfm .fb-head{padding-right:62px}
+}
+@media(prefers-reduced-motion:reduce){.rfm.open,.rfm-box{animation:none}}
 </style>
 </head>
 <body>
@@ -1737,6 +1760,33 @@ select.inp{min-height:54px}
     <h2 class="headline" style="margin-top:10px">Vreme je da vaš biznis dobije sajt koji zaslužuje.</h2>
     <p class="subhead">Ostavite ime i broj telefona. Ostatak posla je na nama.</p>
 
+    <div class="cta-block up-cta">
+      <a class="cta" href="#upitnik"><b>ŽELIM SVOJ SAJT <svg class="ico"><use href="#i-arrow"/></svg></b><small>Traje 20 sekundi. Bez avansa i bez obaveze.</small></a>
+    </div>
+    </div>
+  </div>
+</section>
+
+<!-- P.S. -->
+<section class="ps" id="ps">
+  <div class="col">
+    <p><b class="k">P.S.</b> Skrolovali ste pravo dovde? Kratka verzija: popunite upitnik, za 12 sati gledate sajt, plaćate samo ako vam se svidi. Kasnimo? Ručak i sajt su vaši.</p>
+    <p><b class="k">P.P.S.</b> Najgore što može da vam se desi je besplatan ručak. <a href="#upitnik"><b>Popunite upitnik ovde.</b></a></p>
+  </div>
+</section>
+
+</main>
+
+<footer class="ftr">
+  <nav aria-label="Podnožje"><a href="#cene">Cene</a><a href="#garancija">Garancija</a><a href="#pitanja">Pitanja</a><!-- INTEGRACIJA: <a href="/politika-privatnosti">Politika privatnosti</a> --></nav>
+  <p class="ftr-c"><a href="tel:+38166434874">066 434 874</a><span>·</span><a href="mailto:agency.reform@gmail.com">agency.reform@gmail.com</a></p>
+  <p>© <span id="yr">2026</span> Re:Form agencija. Izrada sajtova za biznise u Srbiji.</p>
+</footer>
+
+<!-- POPUP: upitnik -->
+<div class="rfm" id="rfModal">
+  <div class="rfm-box" role="dialog" aria-modal="true" aria-labelledby="fbT" tabindex="-1">
+    <button class="rfm-x" type="button" id="rfmX" aria-label="Zatvori"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     <div class="form-box">
       <div class="fb-head"><b id="fbT">Obezbedite svoje mesto</b><small id="fbS">Traje 20 sekundi. Bez avansa i bez obaveze.</small><p class="fb-urg bf-only"><svg class="ico"><use href="#i-clock"/></svg><span>Black Friday cena važi za upitnike poslate do 30. 11. Ističe za <b data-bf="short">00d 00:00:00</b></span></p></div>
       <div id="formWrap">
@@ -1837,25 +1887,8 @@ select.inp{min-height:54px}
         <h3>Stiglo je!</h3>
         <p>Javljamo vam se uskoro da potvrdimo detalje i vidimo šta još treba. Sat od 12 sati kreće čim dobijemo sve.</p>
       </div>
-    </div>
   </div>
-</section>
-
-<!-- P.S. -->
-<section class="ps" id="ps">
-  <div class="col">
-    <p><b class="k">P.S.</b> Skrolovali ste pravo dovde? Kratka verzija: popunite upitnik, za 12 sati gledate sajt, plaćate samo ako vam se svidi. Kasnimo? Ručak i sajt su vaši.</p>
-    <p><b class="k">P.P.S.</b> Najgore što može da vam se desi je besplatan ručak. <a href="#upitnik"><b>Popunite upitnik ovde.</b></a></p>
-  </div>
-</section>
-
-</main>
-
-<footer class="ftr">
-  <nav aria-label="Podnožje"><a href="#cene">Cene</a><a href="#garancija">Garancija</a><a href="#pitanja">Pitanja</a><!-- INTEGRACIJA: <a href="/politika-privatnosti">Politika privatnosti</a> --></nav>
-  <p class="ftr-c"><a href="tel:+38166434874">066 434 874</a><span>·</span><a href="mailto:agency.reform@gmail.com">agency.reform@gmail.com</a></p>
-  <p>© <span id="yr">2026</span> Re:Form agencija. Izrada sajtova za biznise u Srbiji.</p>
-</footer>
+</div>
 
 <div class="mcta" id="mcta" aria-hidden="true">
   <a class="cta" href="#upitnik" tabindex="-1"><b>ŽELIM SVOJ SAJT</b><small><span class="bf-only">Iskoristi Black Friday akciju</span><span class="nobf">Bez avansa, od 199 €</span></small></a>
@@ -1935,7 +1968,7 @@ function show(step){
   }
   fNext.innerHTML = lead ? NEXT_HTML.lead : NEXT_HTML.dalje;
   fPrev.hidden = step <= 2; fNext.hidden = step === 4; fBtn.hidden = step !== 4;
-  document.getElementById('upitnik').querySelector('.form-box').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const rfmEl = document.getElementById('rfModal'); if (rfmEl && rfmEl.classList.contains('open')) rfmEl.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 /* svi trenutni odgovori iz forme */
@@ -2109,6 +2142,55 @@ document.addEventListener('click', e => {
   if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   setInterval(()=>{i=(i+1)%imgs.length;show(i);},3200);
 })();
+
+/* ===== POPUP UPITNIK =====
+   Svi linkovi ka #upitnik otvaraju upitnik u popupu. Zatvara se na X, Esc, klik van forme i dugme Nazad na telefonu. */
+(function(){
+  const m = document.getElementById('rfModal'), box = m.querySelector('.rfm-box'), html = document.documentElement;
+  let opener = null, pushed = false;
+  const isOpen = () => m.classList.contains('open');
+  const focusables = () => [...box.querySelectorAll('a[href],button,input,select,textarea,[tabindex]:not([tabindex="-1"])')].filter(el => !el.disabled && el.offsetParent !== null && el.tabIndex >= 0);
+  function open(src){
+    if (isOpen()) return;
+    opener = src || null;
+    const sb = innerWidth - html.clientWidth; if (sb > 0) html.style.paddingRight = sb + 'px';
+    html.classList.add('rfm-lock');
+    m.classList.add('open'); m.scrollTop = 0;
+    try { history.pushState({ rfm: 1 }, '', location.pathname + location.search + '#upitnik'); pushed = true; } catch(_){}
+    setTimeout(() => {
+      const first = matchMedia('(pointer:fine)').matches && box.querySelector('.fstep:not([hidden]) .inp');
+      try { (first || box).focus({ preventScroll: true }); } catch(_){}
+    }, 60);
+  }
+  function close(fromPop){
+    if (!isOpen()) return;
+    m.classList.remove('open');
+    html.classList.remove('rfm-lock'); html.style.paddingRight = '';
+    if (pushed && !fromPop) { pushed = false; try { history.back(); } catch(_){} } else pushed = false;
+    if (opener) { try { opener.focus({ preventScroll: true }); } catch(_){} }
+  }
+  window.rfOpenForm = open;
+  document.addEventListener('click', e => {
+    const a = e.target.closest && e.target.closest('a[href="#upitnik"]');
+    if (!a || box.contains(a)) return;
+    e.preventDefault(); open(a);
+  });
+  document.getElementById('rfmX').addEventListener('click', () => close(false));
+  m.addEventListener('click', e => { if (e.target === m) close(false); });
+  document.addEventListener('keydown', e => {
+    if (!isOpen()) return;
+    if (e.key === 'Escape') { e.preventDefault(); close(false); return; }
+    if (e.key === 'Tab') {
+      const f = focusables(); if (!f.length) return;
+      const i = f.indexOf(document.activeElement);
+      if (e.shiftKey && (i <= 0)) { e.preventDefault(); f[f.length - 1].focus(); }
+      else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
+    }
+  });
+  addEventListener('popstate', () => { if (isOpen()) close(true); });
+  /* ko dođe direktno na re-form.agency/#upitnik odmah dobija popup */
+  if (location.hash === '#upitnik') { try { history.replaceState(null, '', location.pathname + location.search); } catch(_){} open(null); }
+})();
 </script>
 
 <script>
@@ -2175,7 +2257,7 @@ document.addEventListener('click', e => {
     ['top','primeri','problem','kako-radi','sta-dobijate','cene','garancija','pitanja','upitnik','ps'].forEach(function(id){
       var el = document.getElementById(id); if (el) { el.dataset.rfk = 's:' + id; io.observe(el); }
     });
-    var fb = document.querySelector('#upitnik .form-box');
+    var fb = document.querySelector('#rfModal .form-box');
     if (fb) {
       var io2 = new IntersectionObserver(function(es){ if (es[0].isIntersecting) { t('f:vidi'); io2.disconnect(); } }, { threshold: 0.25 });
       io2.observe(fb);
