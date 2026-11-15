@@ -1342,6 +1342,11 @@ select.inp{min-height:54px}
 .lead-ok svg{flex:none;width:20px;height:20px;margin-top:2px;stroke-width:3}
 .lead-ok b{display:block;color:#054F31}
 
+.fproof{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line);text-align:center}
+.fp-stars{display:flex;gap:3px}
+.fp-stars svg{width:20px;height:20px;fill:#FFB400}
+.fp-txt{font-size:14px;line-height:1.4;color:var(--muted);font-weight:500}
+.fp-txt b{color:var(--ink);font-weight:800}
 /* ===== POPUP UPITNIK ===== */
 .rfm{position:fixed;inset:0;z-index:200;display:none;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;background:rgba(14,14,16,.78);padding:clamp(16px,5vh,48px) 16px}
 .rfm.open{display:block;animation:rfmIn .2s ease}
@@ -1877,9 +1882,10 @@ select.inp{min-height:54px}
             <button class="cta" type="button" id="fNext"><b>ŽELIM SVOJ SAJT <svg class="ico"><use href="#i-arrow"/></svg></b><small>Plaćate tek kad vidite gotov sajt</small></button>
             <button class="cta" type="submit" id="fBtn" hidden><b>POŠALJI UPITNIK <svg class="ico"><use href="#i-arrow"/></svg></b><small>Plaćam tek kad vidim gotov sajt</small></button>
           </div>
-          <p class="lf-note" id="lfNote">Slanjem pristajete da vas kontaktiramo u vezi sa izradom sajta. <a href="/privatnost" target="_blank" rel="noopener">Politika privatnosti</a></p>
-          <p class="req-note">Polja označena <span class="rq">*</span> su obavezna.</p>
-          <p class="secure"><svg class="ico"><use href="#i-lock"/></svg>Vaši podaci su sigurni. Koristimo ih samo za izradu vašeg sajta.</p>
+          <div class="fproof">
+            <span class="fp-stars" role="img" aria-label="5 od 5 zvezdica"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg></span>
+            <span class="fp-txt"><b>50+ završenih sajtova</b> za salone, ordinacije, restorane i radnje</span>
+          </div>
         </form>
       </div>
       <div class="f-ok" id="fOk" role="status" aria-live="polite" tabindex="-1">
@@ -1959,7 +1965,6 @@ function show(step){
   document.getElementById('prog').hidden = lead;
   document.getElementById('fbT').textContent = lead ? 'Obezbedite svoje mesto' : 'Upitnik za vaš sajt';
   document.getElementById('fbS').textContent = lead ? 'Traje 20 sekundi. Bez avansa i bez obaveze.' : 'Još 3 kratka koraka, oko 4 minuta.';
-  document.getElementById('lfNote').hidden = !lead;
   if (!lead) {
     document.getElementById('progTxt').textContent = 'Korak ' + (step - 1) + ' od 3';
     document.getElementById('progName').textContent = NAMES[step-1];
