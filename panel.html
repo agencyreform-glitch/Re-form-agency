@@ -206,8 +206,9 @@ const ST = [
 const stName = k => (ST.find(s=>s.k===k)||{n:k||'—'}).n;
 const stCls = k => 'st-' + String(k||'').replace(/\s+/g,'-');
 const upPun = l => l.upitnik ? !!l.upitnik.popunjen : l.izvor==='landing';
-const upTxt = l => !l.upitnik ? '' : (l.upitnik.popunjen ? 'Ceo upitnik poslat' : (l.upitnik.korak>1 ? 'Upitnik nije završen (stao na koraku '+l.upitnik.korak+' od 4)' : 'Samo kontakt, upitnik nije popunjen'));
-const upPill = l => !l.upitnik ? '' : (l.upitnik.popunjen ? '<span class="pill st-kupio">upitnik ✓</span>' : `<span class="pill st-u-radu">${l.upitnik.korak>1?'upitnik '+l.upitnik.korak+'/4':'samo kontakt'}</span>`);
+const bezKlika = l => l.kontaktKlik===false && l.upitnik && !l.upitnik.popunjen;
+const upTxt = l => !l.upitnik ? '' : (l.upitnik.popunjen ? 'Ceo upitnik poslat' : bezKlika(l) ? 'Kontakt sačuvan dok je kucao, nije kliknuo dugme' : (l.upitnik.korak>1 ? 'Upitnik nije završen (stao na koraku '+l.upitnik.korak+' od 4)' : 'Samo kontakt, upitnik nije popunjen'));
+const upPill = l => !l.upitnik ? '' : (l.upitnik.popunjen ? '<span class="pill st-kupio">upitnik ✓</span>' : bezKlika(l) ? '<span class="pill st-nova">nije kliknuo</span>' : `<span class="pill st-u-radu">${l.upitnik.korak>1?'upitnik '+l.upitnik.korak+'/4':'samo kontakt'}</span>`);
 const LBL = {ime_prezime:'Ime i prezime',telefon:'Telefon',email:'Email',naziv_biznisa:'Biznis',vrsta_biznisa:'Vrsta biznisa',delatnost:'Čime se bavi',adresa:'Adresa',radno_vreme:'Radno vreme',telefon_za_kupce:'Telefon za kupce',email_za_kupce:'Email za kupce',instagram:'Instagram',facebook:'Facebook',drugi_linkovi:'Drugi linkovi',pib_mb:'PIB/MB',usluge_proizvodi:'Usluge/proizvodi',o_nama:'O nama',stranice:'Stranice',boje:'Boje',logo:'Logo',primer_sajta:'Primer sajta',ima_domen:'Ima domen',domen:'Domen',zeljeni_domen:'Željeni domen',broj_proizvoda:'Broj proizvoda',dostava:'Dostava',placanje:'Plaćanje',meni:'Meni',rezervacije:'Rezervacije',odrzavanje:'Održavanje',salje_slike:'Slike',dostupan_na:'Dostupan na',napomene:'Napomene',paket:'Paket'};
 
 const S = { key:'', leads:[], days:[], period:'30', status:'sve', q:'' };
@@ -419,6 +420,7 @@ function renderLevak(){
   const xk = [1,2,3,4].map(i=>u('xk:'+i));
   $('dForm').innerHTML = lvInsight(kor,'ljudi') + lvRows(kor, kor[0][1] || fs) +
     `<div class="xk"><span class="sub">Na kom koraku su napustili stranicu:</span>${xk.map((n,i)=>`<span class="pill ${n?'st-nova':'st-odbijeno'}">Korak ${i+1}${i?'':' (kontakt)'}: ${n}</span>`).join('')}</div>` +
+    (u('lead:auto')? `<p class="ins">Kontakt sačuvan čim su upisali telefon: ${u('lead:auto')}. Ko ne klikne dugme, u prijavama ima oznaku „nije kliknuo".</p>` : '') +
     ((err+u('lead:err'))? `<p class="ins">Slanje nije prošlo ${err+u('lead:err')} puta (greška servera ili veze). Proveri da li prijave stižu na Telegram.</p>` : '');
 
   const rows = POLJA.map(([st,nm,fl])=>{

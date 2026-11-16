@@ -2010,13 +2010,75 @@ function collect(faza){
   data.izvor = 'landing'; try { const T = window.RF_T || {}; data._vid = T.vid || ''; data._src = T.src || ''; data._cmp = T.cmp || ''; } catch(_){}
   data.stranica = location.href; data.vreme = new Date().toISOString();
   data._faza = faza; data._korak = cur;
-  if (LEAD) { data._id = LEAD.id; data._tok = LEAD.tok; }
+  if (LEAD) { data._id = LEAD.id; data._tok = LEAD.tok; if (LEAD.novi) data._novi = 1; }
   return data;
 }
+
+/* kontakt se čuva sam čim upišu ispravan telefon, i bez klika na dugme.
+   id i token pravi stranica, pa svako sledeće čuvanje dopunjuje isti lead (i kad stigne preko sendBeacon) */
+const telOk = () => rules[1]['f-tel'](document.getElementById('f-tel').value);
+const snap = () => ['f-ime','f-tel','f-del'].map(id => document.getElementById(id).value.trim()).join('|');
+let Q = Promise.resolve(), autoT = null, sacuvano = '', uLetu = null;
+function noviLead(){
+  if (LEAD) return LEAD;
+  const h = new Uint8Array(16);
+  try { crypto.getRandomValues(h); } catch(_) { for (let i = 0; i < 16; i++) h[i] = Math.random() * 256 | 0; }
+  LEAD = { id: Date.now().toString(36) + [...h.slice(0, 5)].map(b => (b % 36).toString(36)).join(''), tok: [...h].map(b => b.toString(16).padStart(2, '0')).join(''), novi: 1 };
+  try { sessionStorage.setItem('rf_lead', JSON.stringify(LEAD)); } catch(_){}
+  return LEAD;
+}
+/* slanje jedno po jedno, da se dva čuvanja ne mimoiđu */
+function posalji(faza){
+  const p = Q.then(async () => {
+    const kljuc = snap();
+    if (faza === 'auto' && kljuc === sacuvano) return { ok: true };
+    uLetu = kljuc;
+    try {
+      const res = await fetch(CONFIG.WEBHOOK_URL, { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(collect(faza)) });
+      const j = await res.json().catch(() => ({}));
+      if (!res.ok || !j.ok) throw new Error('HTTP ' + res.status);
+      sacuvano = kljuc;
+      if (j.id && j.tok) LEAD = { id: j.id, tok: j.tok };
+      else if (LEAD) delete LEAD.novi;
+      try { sessionStorage.setItem('rf_lead', JSON.stringify(LEAD)); } catch(_){}
+      if (j.novo) {
+        if (faza === 'auto') rfT('lead:auto');
+        if (typeof window.fbq === 'function') window.fbq('track', 'Lead', { content_name: paketSel.value || 'kontakt' });
+      }
+      return j;
+    } finally { uLetu = null; }
+  });
+  Q = p.catch(() => {});
+  return p;
+}
+function autoSave(){
+  clearTimeout(autoT); autoT = null;
+  if (DONE || cur !== 1 || !CONFIG.WEBHOOK_URL || !telOk()) return;
+  if (form.website_hp && form.website_hp.value) return;
+  noviLead();
+  posalji('auto').catch(err => console.warn('[Forma] Kontakt nije sačuvan usput:', err));
+}
+['f-ime','f-tel','f-del'].forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener('input', () => { clearTimeout(autoT); autoT = setTimeout(autoSave, 1500); });
+  el.addEventListener('change', autoSave);
+});
+
 /* tiho čuvanje usput (između koraka i kad zatvore stranicu) */
 function saveQuiet(beacon){
-  if (!LEAD || DONE || !CONFIG.WEBHOOK_URL) return;
-  const body = JSON.stringify(collect('korak'));
+  if (DONE || !CONFIG.WEBHOOK_URL) return;
+  let faza = 'korak';
+  if (cur === 1) {
+    /* zatvorili su stranicu na kratkoj formi: šalje se ono što još nije sačuvano */
+    clearTimeout(autoT); autoT = null;
+    const k = snap();
+    if (!telOk() || k === sacuvano || k === uLetu || (form.website_hp && form.website_hp.value)) return;
+    noviLead(); faza = 'auto'; sacuvano = k;
+  } else if (!LEAD) return;
+  const data = collect(faza);
+  /* lead se upravo pravi (taj zahtev se završava i kad se stranica zatvori): ovo ga samo dopunjuje, ne pravi drugi */
+  if (faza === 'auto' && uLetu !== null && LEAD.novi) { delete data._novi; data._dopuna = 1; }
+  const body = JSON.stringify(data);
   try {
     if (beacon && navigator.sendBeacon && navigator.sendBeacon(CONFIG.WEBHOOK_URL, new Blob([body], { type: 'text/plain' }))) return;
     fetch(CONFIG.WEBHOOK_URL, { method: 'POST', body, keepalive: true, headers: { 'Content-Type': 'application/json' } }).catch(() => {});
@@ -2030,6 +2092,7 @@ async function sendLead(){
   lErr.classList.remove('show');
   if (!check(1)) return;
   if (form.website_hp && form.website_hp.value) return;
+  clearTimeout(autoT); autoT = null;
   const ime = document.getElementById('f-ime').value.trim().split(/\s+/)[0];
   const next = () => {
     document.getElementById('leadIme').textContent = ime ? ', ' + ime : '';
@@ -2039,14 +2102,9 @@ async function sendLead(){
   if (!CONFIG.WEBHOOK_URL) { fDev.classList.add('show'); next(); return; }
   fNext.classList.add('btn-loading');
   try {
-    const res = await fetch(CONFIG.WEBHOOK_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(collect('kontakt')) });
-    const j = await res.json().catch(() => ({}));
-    if (!res.ok || !j.ok) throw new Error('HTTP ' + res.status);
-    /* novi lead dobija token; ako je već postojao (osvežena stranica), samo je dopunjen */
-    if (j.id && j.tok) {
-      LEAD = { id: j.id, tok: j.tok }; try { sessionStorage.setItem('rf_lead', JSON.stringify(LEAD)); } catch(_){}
-      if (typeof window.fbq === 'function') window.fbq('track', 'Lead', { content_name: paketSel.value || 'kontakt' });
-    }
+    /* ako je kontakt već sačuvan dok su kucali, ovo ga samo dopunjuje i beleži klik */
+    noviLead();
+    await posalji('kontakt');
     rfT('lead:ok');
     next();
   } catch (err) { console.error('[Forma] Greška pri slanju kontakta:', err); rfT('lead:err'); lErr.classList.add('show'); }
