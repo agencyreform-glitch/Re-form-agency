@@ -170,11 +170,12 @@ svg text{font:11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:v
     <div class="grid kpis" id="gKpiL"></div>
     <div class="grid two">
       <div class="card"><h2>Dokle stignu na stranici</h2><div id="dSek"></div><p class="help">Broj posetilaca koji su doskrolovali do sekcije. Desno je koliko ih je otpalo u odnosu na sekciju iznad. Ko klikne dugme ka upitniku, preskače sekcije između.</p></div>
-      <div class="card"><h2>Forma i upitnik korak po korak</h2><div id="dForm"></div><p class="help">Korak 1 je kratka forma (ime, telefon, čime se bave): tu nastaje lead. „Napustili stranicu" znači da su počeli i zatvorili ili sklonili stranicu pre nego što su poslali ceo upitnik.</p></div>
+      <div class="card"><h2>Forma i upitnik korak po korak</h2><div id="dForm"></div><p class="help">Korak 1 je kratka forma (čime se bave, ime, telefon): tu nastaje lead. „Napustili stranicu" znači da su počeli i zatvorili ili sklonili stranicu pre nego što su poslali ceo upitnik.</p></div>
     </div>
     <div class="grid two" style="margin-top:12px;align-items:start">
       <div class="card"><h2>Polja u upitniku</h2><div id="dPolja"></div><p class="help">Dotakli = kliknuli u polje. Greška = pokušali dalje sa praznim ili pogrešnim poljem. Izašli posle njega = to je bilo poslednje polje koje su dirali pre nego što su otišli. * obavezno polje.</p></div>
-      <div class="card"><h2>Odakle kreću ka upitniku</h2><div id="dCta"></div><p class="help">Klikovi na dugmad koja vode na upitnik, po mestu na stranici.</p></div>
+      <div><div class="card"><h2>Odakle kreću ka upitniku</h2><div id="dCta"></div><p class="help">Klikovi na dugmad koja vode na upitnik, po mestu na stranici.</p></div>
+      <div class="card" style="margin-top:12px"><h2>Viber, WhatsApp i poziv</h2><div id="dMsg"></div><p class="help">Ko je kliknuo da piše ili zove, i sa kog mesta na stranici. Jedan posetilac se broji jednom po danu.</p></div></div>
     </div>
   </section>
 
@@ -275,7 +276,7 @@ function renderPregled(){
   const R = range();
   const days = S.days.filter(d=>inR(d.datum,R));
   const sum = (f,e) => days.reduce((n,d)=>n+((d[f]||{})[e]||0),0);
-  const vis = sum('uq','pv'), call = sum('uq','call'), wa = sum('uq','wa'), fs = sum('uq','form_start');
+  const vis = sum('uq','pv'), call = sum('uq','call'), wa = sum('uq','wa'), vb = sum('uq','vb'), fs = sum('uq','form_start');
   const leads = S.leads.filter(l=>inR(leadDay(l),R));
   const sales = S.leads.filter(l=>l.status==='kupio' && inR(saleDay(l),R));
   const rev = sales.reduce((n,l)=>n+(Number(l.vrednost)||0),0);
@@ -283,6 +284,7 @@ function renderPregled(){
     {l:'Posetioci', v:vis, s:sum('ev','pv')+' prikaza stranice'},
     {l:'Klik „Pozovi"', v:call, s:pct(call,vis)+' posetilaca'},
     {l:'Klik WhatsApp', v:wa, s:pct(wa,vis)+' posetilaca'},
+    {l:'Klik Viber', v:vb, s:pct(vb,vis)+' posetilaca'},
     {l:'Počeli formu', v:fs, s:pct(fs,vis)+' posetilaca'},
     {l:'Prijave', v:leads.length, s:'konverzija '+pct(leads.length,vis)+' · ceo upitnik '+leads.filter(upPun).length, hl:1},
     {l:'Kupili', v:sales.length, s:'zatvoreno '+pct(sales.length,leads.length)+' prijava'},
@@ -330,7 +332,7 @@ function renderChart(R){
 function renderIzvori(R, days, leads, sales){
   const m = {};
   const row = k => (m[k] ||= {pv:0,kontakt:0,fs:0,leads:0,sales:0,rev:0});
-  days.forEach(d=>Object.entries(d.izvori||{}).forEach(([k,v])=>{ const r=row(k); r.pv+=(v.uq||{}).pv||0; r.kontakt+=((v.uq||{}).call||0)+((v.uq||{}).wa||0); r.fs+=(v.uq||{}).form_start||0; }));
+  days.forEach(d=>Object.entries(d.izvori||{}).forEach(([k,v])=>{ const r=row(k); r.pv+=(v.uq||{}).pv||0; r.kontakt+=((v.uq||{}).call||0)+((v.uq||{}).wa||0)+((v.uq||{}).vb||0); r.fs+=(v.uq||{}).form_start||0; }));
   const lk = l => (l.utm_source||'direktno') + (l.utm_campaign? ' · '+l.utm_campaign:'');
   leads.forEach(l=>row(l.izvor==='ručno'?'ručno dodato':lk(l)).leads++);
   sales.forEach(l=>{ const r=row(l.izvor==='ručno'?'ručno dodato':lk(l)); r.sales++; r.rev+=Number(l.vrednost)||0; });
@@ -344,19 +346,22 @@ function renderIzvori(R, days, leads, sales){
 const SEKCIJE = [
   ['top','Početak (prvi ekran)'], ['primeri','Primeri sajtova'], ['problem','„Dragi vlasnici biznisa"'],
   ['kako-radi','Kako radi, 4 koraka'], ['sta-dobijate','Šta dobijate + pokloni'], ['cene','Paketi i cene'],
-  ['garancija','Garancija (ručak)'], ['pitanja','Česta pitanja'], ['upitnik','Upitnik'], ['ps','P.S. na dnu']
+  ['garancija','Garancija (ručak)'], ['pitanja','Česta pitanja'], ['upitnik','Poziv na dnu („Još samo ovo“)'], ['ps','P.S. na dnu']
 ];
 const KORACI = [
-  ['f:vidi','Videli formu'], ['form_start','Počeli da popunjavaju'], ['k:2','Ostavili kontakt (lead)'],
+  ['f:vidi','Otvorili formu'], ['form_start','Počeli da popunjavaju'], ['k:2','Ostavili kontakt (lead)'],
   ['k:3','Prošli korak 2 · Biznis'], ['k:4','Prošli korak 3 · Domen i sadržaj'], ['sub:try','Kliknuli „Pošalji upitnik"'], ['sub:ok','Poslali ceo upitnik']
 ];
 const POLJA = [
-  [1,'Kontakt (kratka forma)',[['ime_prezime','Ime i prezime',1],['telefon','Telefon',1],['delatnost','Čime se bavi',1]]],
+  [1,'Kontakt (kratka forma)',[['delatnost','Čime se bavi (dugmići)',1],['delatnost_drugo','Čime se bavi (Nešto drugo, tekst)',0],['ime_prezime','Ime',1],['telefon','Telefon',1]]],
   [2,'Podaci o biznisu',[['email','Email',1],['dostupan_na','WhatsApp / Viber',0],['naziv_biznisa','Naziv biznisa',1],['vrsta_biznisa','Vrsta biznisa',1],['paket','Paket',1],['adresa','Adresa',0],['radno_vreme','Radno vreme',0],['telefon_za_kupce','Telefon za kupce',0],['email_za_kupce','Email za kupce',0],['instagram','Instagram',0],['facebook','Facebook',0],['drugi_linkovi','Drugi linkovi',0],['pib_mb','PIB i MB',0]]],
   [3,'Domen i sadržaj',[['ima_domen','Ima li domen',0],['domen','Domen',0],['zeljeni_domen','Željeni domen',0],['logo','Logo',0],['boje','Boje',0],['primer_sajta','Primer sajta',0],['usluge_proizvodi','Usluge / proizvodi',0],['broj_proizvoda','Broj proizvoda',0],['dostava','Dostava',0],['placanje','Plaćanje',0],['meni','Meni',0],['rezervacije','Rezervacije',0],['o_nama','O nama',0],['stranice','Stranice',0],['odrzavanje','Održavanje',0]]],
   [4,'Slike i potvrda',[['salje_slike','Slike i video',0],['napomene','Napomene',0],['saglasnost_podaci','Saglasnost (podaci)',1],['saglasnost_privatnost','Saglasnost (privatnost)',1]]]
 ];
-const CTA_SRC = { top:'Prvi ekran', primeri:'Primeri', problem:'„Dragi vlasnici"', 'kako-radi':'Kako radi', 'sta-dobijate':'Šta dobijate', cene:'Cene', garancija:'Garancija', pitanja:'Pitanja', ps:'P.S. na dnu', mcta:'Lepljivo dugme (telefon)', meni:'Dugme u meniju' };
+const MSG_GDE = { top:'Prvi ekran', primeri:'Primeri', problem:'„Dragi vlasnici“', 'kako-radi':'Kako radi', 'sta-dobijate':'Šta dobijate', cene:'Cene', garancija:'Garancija', pitanja:'Pitanja', upitnik:'Poziv na dnu', ps:'P.S. na dnu', mcta:'Lepljiva traka (telefon)', meni:'Heder', forma:'Forma (popup)', futer:'Futer' };
+const MSG_KAN = [['vb','Viber'],['wa','WhatsApp'],['tel','Poziv']];
+const POPUP_OD = '2026-11-16'; // od ovog dana je forma popup; ranije se „otvorili formu“ brojalo skrolom do forme na dnu
+const CTA_SRC = { top:'Prvi ekran', primeri:'Primeri', problem:'„Dragi vlasnici"', 'kako-radi':'Kako radi', 'sta-dobijate':'Šta dobijate', cene:'Cene', garancija:'Garancija', pitanja:'Pitanja', upitnik:'Poziv na dnu', ps:'P.S. na dnu', mcta:'Lepljivo dugme (telefon)', meni:'Dugme u meniju' };
 S.lvSrc = 'svi';
 
 function lvDays(){ const R = range(); return S.days.filter(d=>inR(d.datum,R)); }
@@ -401,14 +406,15 @@ function renderLevak(){
   const fv = u('f:vidi'), fs = u('form_start'), ok = u('sub:ok'), ld = u('k:2');
   $('gKpiL').innerHTML = [
     {l:'Posetioci', v:vis, s: (mob+desk)? Math.round(mob/(mob+desk)*100)+'% sa telefona' : '—'},
-    {l:'Stigli do forme', v:u('s:upitnik'), s:pct(u('s:upitnik'),vis)+' posetilaca'},
-    {l:'Počeli formu', v:fs, s:pct(fs,fv)+' od onih koji su je videli'},
+    {l:'Otvorili formu', v:fv, s:pct(fv,vis)+' posetilaca'},
+    {l:'Počeli formu', v:fs, s:pct(fs,fv)+' od onih koji su je otvorili'},
     {l:'Ostavili kontakt', v:ld, s:pct(ld,fs)+' od onih koji su počeli', hl:1},
-    {l:'Poslali ceo upitnik', v:ok, s:pct(ok,ld)+' od onih koji su ostavili kontakt'}
+    {l:'Poslali ceo upitnik', v:ok, s:pct(ok,ld)+' od onih koji su ostavili kontakt'},
+    {l:'Pisali na Viber / WhatsApp', v:u('vb')+u('wa'), s:'Viber '+u('vb')+' · WhatsApp '+u('wa')+' · poziv '+u('call')}
   ].map(k=>`<div class="card kpi ${k.hl?'hl':''}"><div class="l">${k.l}</div><div class="v">${k.v}</div><div class="s">${k.s}</div></div>`).join('');
 
   if (!vis) {
-    ['dSek','dForm','dPolja','dCta'].forEach(id=>$(id).innerHTML='<div class="empty">Još nema podataka za ovaj period. Brojanje kreće od prve posete posle objave.</div>');
+    ['dSek','dForm','dPolja','dCta','dMsg'].forEach(id=>$(id).innerHTML='<div class="empty">Još nema podataka za ovaj period. Brojanje kreće od prve posete posle objave.</div>');
     return;
   }
 
@@ -419,6 +425,8 @@ function renderLevak(){
   const err = u('sub:err');
   const xk = [1,2,3,4].map(i=>u('xk:'+i));
   $('dForm').innerHTML = lvInsight(kor,'ljudi') + lvRows(kor, kor[0][1] || fs) +
+    ((u('f:zatvori')+u('f:izasao'))? `<p class="ins">Otvorili formu i otišli bez ijednog dodira: <b>${u('f:zatvori')+u('f:izasao')}</b> (zatvorili popup ${u('f:zatvori')}, zatvorili stranicu ${u('f:izasao')}).</p>` : '') +
+    (days.some(d=>d.datum<POPUP_OD)? `<p class="help" style="margin-top:6px">Do 15. 11. forma je stajala na dnu stranice, pa se kao „otvorili formu“ brojao svako ko je doskrolovao do nje. Za pravu sliku gledaj dane od 16. 11.</p>` : '') +
     `<div class="xk"><span class="sub">Na kom koraku su napustili stranicu:</span>${xk.map((n,i)=>`<span class="pill ${n?'st-nova':'st-odbijeno'}">Korak ${i+1}${i?'':' (kontakt)'}: ${n}</span>`).join('')}</div>` +
     (u('lead:auto')? `<p class="ins">Kontakt sačuvan čim su upisali telefon: ${u('lead:auto')}. Ko ne klikne dugme, u prijavama ima oznaku „nije kliknuo".</p>` : '') +
     ((err+u('lead:err'))? `<p class="ins">Slanje nije prošlo ${err+u('lead:err')} puta (greška servera ili veze). Proveri da li prijave stižu na Telegram.</p>` : '');
@@ -440,6 +448,11 @@ function renderLevak(){
   const mx = Math.max(1,...cta.map(r=>r[1]));
   $('dCta').innerHTML = (cta.length? cta.map(r=>`<div class="lv sm"><div class="n">${r[0]}</div><div class="bar"><i style="width:${r[1]/mx*100}%"></i></div><div class="c">${r[1]}</div><div class="d"></div></div>`).join('') : '<div class="empty">Još niko nije kliknuo dugme ka upitniku.</div>') +
     `<div class="xk"><span class="sub">Izabran paket iz cenovnika:</span>${pk.map(r=>`<span class="pill st-u-radu">${r[0]}: ${r[1]}</span>`).join('')}</div>`;
+
+  const msg = MSG_KAN.flatMap(([k,kn])=>Object.keys(MSG_GDE).map(g=>[kn+' · '+MSG_GDE[g], u('m:'+k+'-'+g)])).filter(r=>r[1]).sort((a,b)=>b[1]-a[1]);
+  const mm = Math.max(1,...msg.map(r=>r[1]));
+  $('dMsg').innerHTML = `<div class="xk" style="margin:0 0 10px"><span class="pill st-nova">Viber: ${u('vb')}</span><span class="pill st-nova">WhatsApp: ${u('wa')}</span><span class="pill st-nova">Poziv: ${u('call')}</span></div>` +
+    (msg.length? msg.map(r=>`<div class="lv sm"><div class="n">${r[0]}</div><div class="bar"><i style="width:${r[1]/mm*100}%"></i></div><div class="c">${r[1]}</div><div class="d"></div></div>`).join('') : '<div class="empty">Još niko nije kliknuo Viber, WhatsApp ili poziv sa mestom (po mestu se broji od 16. 11.).</div>');
 }
 
 /* ---------- prijave ---------- */
