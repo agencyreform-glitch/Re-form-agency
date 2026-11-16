@@ -1409,22 +1409,24 @@ select.inp{min-height:54px}
 .ma svg{width:17px;height:17px;flex:none}
 .ma.wa{background:#25D366}
 #leadForm:not(.s1) .f-alt{display:none}
-.dchips{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.dchip{position:relative;display:block;cursor:pointer}
-.dchip input{position:absolute;opacity:0;pointer-events:none}
-.dchip span{display:flex;align-items:center;justify-content:center;min-height:44px;padding:6px 8px;border:1.5px solid #D0D5DD;border-radius:12px;background:#fff;font-size:14.5px;font-weight:700;color:var(--ink);text-align:center;line-height:1.15;transition:border-color .15s,background .15s}
-.dchip:hover span{border-color:#A1A1AA}
-.dchip input:checked + span{border-color:var(--p);background:var(--p-soft);color:var(--p-d)}
-.dchip input:focus-visible + span{outline:3px solid var(--p);outline-offset:2px}
-.field.invalid .dchip span{border-color:var(--p)}
-.del-dr{margin-top:8px}
-.del-f legend{margin-bottom:8px}
-.f-safe{display:flex;align-items:center;gap:7px;margin:0;font-size:13px;line-height:1.35;color:var(--muted);font-weight:500}
-.f-safe svg{width:15px;height:15px;flex:none;color:#16A34A}
-.rfm .dchips{gap:7px}
+
 @media(max-width:640px){.hdr-act .hb.call{display:none}.mcta{gap:6px}.mc-ic{width:44px;height:44px}}
-@media(max-width:380px){.dchip span{font-size:13.5px;padding:6px 4px}.mc-ic{width:42px;height:42px}}
+@media(max-width:380px){.mc-ic{width:42px;height:42px}}
 @media(max-width:350px){.mc-ic.call{display:none}}
+
+/* ===== popup bez gužve ===== */
+.rfm .fb-urg{background:none;border:0;padding:0;margin-top:6px;font-size:13px;font-weight:600;color:var(--muted)}
+.rfm .fb-urg svg{width:14px;height:14px}
+.rfm .fb-head .fb-urg b{font-size:13px}
+.rfm #leadForm.s1 .fproof{display:none}
+.f-safe{display:block;margin-top:2px;font-size:12.5px;line-height:1.35;color:var(--muted);font-weight:500}
+.f-alt{gap:6px 4px;margin-top:14px;padding-top:0;border-top:0;font-size:14px}
+.f-alt > span{font-weight:500}
+.ma,.ma.vb,.ma.wa{height:auto;padding:2px 4px;background:none;color:var(--ink);font-weight:700;border-radius:4px;text-decoration:underline;text-underline-offset:3px}
+.ma:hover,.ma.vb:hover,.ma.wa:hover{background:none;color:var(--p)}
+.ma svg{width:15px;height:15px}
+.ma.vb svg{color:#7360F2}.ma.wa svg{color:#1EBE5A}
+@media(max-width:640px){.rfm #leadForm.s1 .fgrid.two{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -1853,7 +1855,7 @@ select.inp{min-height:54px}
   <div class="rfm-box" role="dialog" aria-modal="true" aria-labelledby="fbT" tabindex="-1">
     <button class="rfm-x" type="button" id="rfmX" aria-label="Zatvori"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     <div class="form-box">
-      <div class="fb-head"><b id="fbT">Obezbedite svoje mesto</b><small id="fbS">Traje 20 sekundi. Bez avansa i bez obaveze.</small><p class="fb-urg bf-only"><svg class="ico"><use href="#i-clock"/></svg><span>Black Friday cena važi za prijave do 30. 11. Ističe za <b data-bf="short">00d 00:00:00</b></span></p></div>
+      <div class="fb-head"><b id="fbT">Obezbedite svoje mesto</b><small id="fbS">Traje 20 sekundi. Bez avansa i bez obaveze.</small><p class="fb-urg bf-only"><svg class="ico"><use href="#i-clock"/></svg><span>Black Friday cena važi još <b data-bf="short">00d 00:00:00</b></span></p></div>
       <div id="formWrap">
         <div class="prog" id="prog" hidden>
           <div class="prog-l"><span id="progTxt">Korak 1 od 3</span><span id="progName">Podaci o biznisu</span></div>
@@ -1864,14 +1866,10 @@ select.inp{min-height:54px}
           <!-- KORAK 1: kratka lead forma -->
           <div class="fstep" data-step="1">
             <div class="fgrid two">
-              <fieldset class="field f-full del-f"><legend>Čime se bavite? <span class="rq">*</span></legend>
-                <div class="dchips"><label class="dchip"><input type="radio" name="delatnost" value="Salon, lepota i nega" data-vrsta="Lepota i nega" id="f-del"><span>Salon</span></label><label class="dchip"><input type="radio" name="delatnost" value="Restoran, kafić" data-vrsta="Ugostiteljstvo (restoran, kafić)"><span>Restoran</span></label><label class="dchip"><input type="radio" name="delatnost" value="Ordinacija, zdravlje" data-vrsta="Zdravlje i ordinacije"><span>Ordinacija</span></label><label class="dchip"><input type="radio" name="delatnost" value="Prodavnica, butik" data-vrsta="Prodavnica / butik"><span>Prodavnica</span></label><label class="dchip"><input type="radio" name="delatnost" value="Majstor, gradnja, zanat" data-vrsta="Gradnja i zanati"><span>Majstor</span></label><label class="dchip"><input type="radio" name="delatnost" value="Servis i popravke" data-vrsta="Servisi i popravke"><span>Servis</span></label><label class="dchip"><input type="radio" name="delatnost" value="Smeštaj, turizam" data-vrsta="Smeštaj i turizam"><span>Smeštaj</span></label><label class="dchip"><input type="radio" name="delatnost" value="Usluge, agencija" data-vrsta="Agencije i usluge"><span>Usluge</span></label><label class="dchip"><input type="radio" name="delatnost" value="Nešto drugo" data-vrsta="Nešto drugo"><span>Drugo</span></label></div>
-                <input class="inp del-dr" id="f-del-dr" name="delatnost_drugo" type="text" placeholder="Napišite ukratko, npr. knjigovodstvo" hidden>
-                <span class="ferr">Izaberite čime se bavite.</span></fieldset>
-              <div class="field"><label for="f-ime">Ime <span class="rq">*</span></label><input class="inp" id="f-ime" name="ime_prezime" type="text" required autocomplete="given-name"><span class="ferr">Unesite ime.</span></div>
-              <div class="field"><label for="f-tel">Broj telefona <span class="rq">*</span></label><input class="inp" id="f-tel" name="telefon" type="tel" required autocomplete="tel" inputmode="tel" placeholder="npr. 064 123 4567"><span class="ferr">Unesite ispravan broj telefona.</span></div>
-              <p class="f-safe f-full"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg><span>Javljamo se porukom na Viber ili WhatsApp. Broj ne delimo ni sa kim.</span></p>
-            </div>
+                            <div class="field"><label for="f-ime">Ime <span class="rq">*</span></label><input class="inp" id="f-ime" name="ime_prezime" type="text" required autocomplete="given-name"><span class="ferr">Unesite ime.</span></div>
+              <div class="field"><label for="f-tel">Broj telefona <span class="rq">*</span></label><input class="inp" id="f-tel" name="telefon" type="tel" required autocomplete="tel" inputmode="tel" placeholder="npr. 064 123 4567"><span class="ferr">Unesite ispravan broj telefona.</span><small class="hint f-safe">Javljamo se porukom na Viber ili WhatsApp. Broj ne delimo ni sa kim.</small></div>
+              <div class="field f-full"><label for="f-del">Čime se bavite? <span class="rq">*</span></label><input class="inp" id="f-del" name="delatnost" type="text" required placeholder="npr. frizerski salon u Kruševcu"><span class="ferr">Napišite ukratko čime se bavite.</span></div>
+                          </div>
             <div class="f-alert err" id="lErr" role="alert"><svg class="ico"><use href="#i-alert"/></svg><span>Slanje nije uspelo. Pokušajte ponovo ili nam pišite na <a href="viber://chat?number=%2B38166434874&amp;draft=Zdravo%2C%20zanima%20me%20sajt%20za%20199%E2%82%AC.%20%C5%A0ta%20vam%20treba%20od%20mene%20da%20krenemo%3F">Viber</a> ili <a href="https://wa.me/38166434874?text=Zdravo%2C%20zanima%20me%20sajt%20za%20199%E2%82%AC.%20%C5%A0ta%20vam%20treba%20od%20mene%20da%20krenemo%3F" target="_blank" rel="noopener">WhatsApp</a>.</span></div>
           </div>
 
@@ -2009,20 +2007,8 @@ let LEAD = null;
 try { LEAD = JSON.parse(sessionStorage.getItem('rf_lead') || 'null'); } catch(_){}
 function setErr(el){ el.closest('.field').classList.add('invalid'); el.setAttribute('aria-invalid','true'); }
 function clearErr(el){ const f = el.closest('.field'); if (f) f.classList.remove('invalid'); el.removeAttribute('aria-invalid'); }
-/* korak 1: čime se bave (dugmići) */
-const delIzbor = () => form.querySelector('input[name="delatnost"]:checked');
-const delDr = document.getElementById('f-del-dr');
-const delVal = () => { const r = delIzbor(); if (!r) return ''; const t = r.value === 'Nešto drugo' ? delDr.value.trim() : ''; return t ? 'Nešto drugo: ' + t : r.value; };
-let vrstaAuto = true;
-form.querySelectorAll('input[name="delatnost"]').forEach(r => r.addEventListener('change', () => {
-  clearErr(document.getElementById('f-del'));
-  const dr = r.value === 'Nešto drugo'; delDr.hidden = !dr; if (dr) setTimeout(() => { try { delDr.focus({ preventScroll: true }); } catch(_){} }, 30);
-  /* vrsta biznisa u koraku 2 se popunjava sama, dok je ne promene ručno */
-  if (vrstaAuto && r.dataset.vrsta) { vrstaSel.value = r.dataset.vrsta; upCond(); }
-}));
-vrstaSel.addEventListener('change', () => { vrstaAuto = false; });
 const rules = {
-  1: { 'f-del': () => !!delIzbor(), 'f-ime': v => v.trim().length >= 2, 'f-tel': v => v.replace(/[^\d+]/g,'').replace(/^\+/,'').length >= 8 },
+  1: { 'f-ime': v => v.trim().length >= 2, 'f-tel': v => v.replace(/[^\d+]/g,'').replace(/^\+/,'').length >= 8, 'f-del': v => v.trim().length >= 3 },
   2: { 'f-email': v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()), 'f-biz': v => v.trim().length >= 2, 'f-vrsta': v => v !== '', 'f-paket': v => v !== '' },
   3: {},
   4: { 'f-sag1': (v, el) => el.checked, 'f-sag2': (v, el) => el.checked }
@@ -2062,7 +2048,6 @@ function collect(faza){
   fd.delete('website_hp');
   const data = {};
   for (const [k, v] of fd.entries()) { if (v === '') continue; data[k] = k in data ? [].concat(data[k], v) : v; }
-  if (data.delatnost_drugo) { if (data.delatnost === 'Nešto drugo') data.delatnost = 'Nešto drugo: ' + data.delatnost_drugo; delete data.delatnost_drugo; }
   if (data.ima_domen === 'Da') delete data.zeljeni_domen; else delete data.domen;
   if (document.getElementById('condShop').hidden) { delete data.broj_proizvoda; delete data.dostava; delete data.placanje; }
   if (document.getElementById('condFood').hidden) { delete data.meni; delete data.rezervacije; }
@@ -2076,7 +2061,7 @@ function collect(faza){
 /* kontakt se čuva sam čim upišu ispravan telefon, i bez klika na dugme.
    id i token pravi stranica, pa svako sledeće čuvanje dopunjuje isti lead (i kad stigne preko sendBeacon) */
 const telOk = () => rules[1]['f-tel'](document.getElementById('f-tel').value);
-const snap = () => [document.getElementById('f-ime').value.trim(), document.getElementById('f-tel').value.trim(), delVal()].join('|');
+const snap = () => ['f-ime','f-tel','f-del'].map(id => document.getElementById(id).value.trim()).join('|');
 let Q = Promise.resolve(), autoT = null, sacuvano = '', uLetu = null;
 function noviLead(){
   if (LEAD) return LEAD;
@@ -2117,7 +2102,7 @@ function autoSave(){
   noviLead();
   posalji('auto').catch(err => console.warn('[Forma] Kontakt nije sačuvan usput:', err));
 }
-['f-ime','f-tel','f-del-dr', ...[...form.querySelectorAll('input[name="delatnost"]')].map(r => r.id || (r.id = 'f-del-' + r.value.split(/[ ,]/)[0].toLowerCase()))].forEach(id => {
+['f-ime','f-tel','f-del'].forEach(id => {
   const el = document.getElementById(id);
   el.addEventListener('input', () => { clearTimeout(autoT); autoT = setTimeout(autoSave, 1500); });
   el.addEventListener('change', autoSave);
@@ -2306,7 +2291,7 @@ document.addEventListener('click', e => {
     m.classList.add('open'); m.scrollTop = 0;
     try { history.pushState({ rfm: 1 }, '', location.pathname + location.search + '#upitnik'); pushed = true; } catch(_){}
     setTimeout(() => {
-      const first = matchMedia('(pointer:fine)').matches && box.querySelector('.fstep:not([hidden]):not([data-step="1"]) .inp');
+      const first = matchMedia('(pointer:fine)').matches && box.querySelector('.fstep:not([hidden]) .inp');
       try { (first || box).focus({ preventScroll: true }); } catch(_){}
     }, 60);
   }

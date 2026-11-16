@@ -170,7 +170,7 @@ svg text{font:11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:v
     <div class="grid kpis" id="gKpiL"></div>
     <div class="grid two">
       <div class="card"><h2>Dokle stignu na stranici</h2><div id="dSek"></div><p class="help">Broj posetilaca koji su doskrolovali do sekcije. Desno je koliko ih je otpalo u odnosu na sekciju iznad. Ko klikne dugme ka upitniku, preskače sekcije između.</p></div>
-      <div class="card"><h2>Forma i upitnik korak po korak</h2><div id="dForm"></div><p class="help">Korak 1 je kratka forma (čime se bave, ime, telefon): tu nastaje lead. „Napustili stranicu" znači da su počeli i zatvorili ili sklonili stranicu pre nego što su poslali ceo upitnik.</p></div>
+      <div class="card"><h2>Forma i upitnik korak po korak</h2><div id="dForm"></div><p class="help">Korak 1 je kratka forma (ime, telefon, čime se bave): tu nastaje lead. „Napustili stranicu" znači da su počeli i zatvorili ili sklonili stranicu pre nego što su poslali ceo upitnik.</p></div>
     </div>
     <div class="grid two" style="margin-top:12px;align-items:start">
       <div class="card"><h2>Polja u upitniku</h2><div id="dPolja"></div><p class="help">Dotakli = kliknuli u polje. Greška = pokušali dalje sa praznim ili pogrešnim poljem. Izašli posle njega = to je bilo poslednje polje koje su dirali pre nego što su otišli. * obavezno polje.</p></div>
@@ -353,7 +353,7 @@ const KORACI = [
   ['k:3','Prošli korak 2 · Biznis'], ['k:4','Prošli korak 3 · Domen i sadržaj'], ['sub:try','Kliknuli „Pošalji upitnik"'], ['sub:ok','Poslali ceo upitnik']
 ];
 const POLJA = [
-  [1,'Kontakt (kratka forma)',[['delatnost','Čime se bavi (dugmići)',1],['delatnost_drugo','Čime se bavi (Nešto drugo, tekst)',0],['ime_prezime','Ime',1],['telefon','Telefon',1]]],
+  [1,'Kontakt (kratka forma)',[['ime_prezime','Ime',1],['telefon','Telefon',1],['delatnost','Čime se bavi',1]]],
   [2,'Podaci o biznisu',[['email','Email',1],['dostupan_na','WhatsApp / Viber',0],['naziv_biznisa','Naziv biznisa',1],['vrsta_biznisa','Vrsta biznisa',1],['paket','Paket',1],['adresa','Adresa',0],['radno_vreme','Radno vreme',0],['telefon_za_kupce','Telefon za kupce',0],['email_za_kupce','Email za kupce',0],['instagram','Instagram',0],['facebook','Facebook',0],['drugi_linkovi','Drugi linkovi',0],['pib_mb','PIB i MB',0]]],
   [3,'Domen i sadržaj',[['ima_domen','Ima li domen',0],['domen','Domen',0],['zeljeni_domen','Željeni domen',0],['logo','Logo',0],['boje','Boje',0],['primer_sajta','Primer sajta',0],['usluge_proizvodi','Usluge / proizvodi',0],['broj_proizvoda','Broj proizvoda',0],['dostava','Dostava',0],['placanje','Plaćanje',0],['meni','Meni',0],['rezervacije','Rezervacije',0],['o_nama','O nama',0],['stranice','Stranice',0],['odrzavanje','Održavanje',0]]],
   [4,'Slike i potvrda',[['salje_slike','Slike i video',0],['napomene','Napomene',0],['saglasnost_podaci','Saglasnost (podaci)',1],['saglasnost_privatnost','Saglasnost (privatnost)',1]]]
