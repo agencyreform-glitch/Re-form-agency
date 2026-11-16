@@ -1,8 +1,9 @@
 // Beleži posete, klikove i levak sa sajta.
-// Osnovni događaji: pv (poseta), call, wa, form_start, cta.
+// Osnovni događaji: pv (poseta), call, wa, vb (Viber), form_start, cta.
 // Levak: s:<sekcija> (dokle su stigli), f:vidi (videli upitnik), fp:<polje> (dotakli polje),
 // fe:<polje> (greška u polju), k:<korak> (prešli na korak), lead:ok|err (kratka forma), sub:try|ok|err (ceo upitnik),
-// x:<polje> / xk:<korak> (gde su izašli iz upitnika), c:<sekcija> (klik ka upitniku), pk:<paket>, dv:m|d (uređaj).
+// x:<polje> / xk:<korak> (gde su izašli iz upitnika), c:<sekcija> (klik ka upitniku), pk:<paket>, dv:m|d (uređaj),
+// m:<kanal>-<mesto> (klik na poziv, Viber ili WhatsApp po mestu), f:zatvori / f:izasao (otvorili formu i otišli bez kucanja).
 // Brojači se čuvaju po danu u storu "analitika-v3": ev = svi događaji, uq = jedinstveni posetioci.
 import { getStore } from "@netlify/blobs";
 
@@ -17,8 +18,8 @@ const day = (d = new Date()) =>
 
 const clean = (v, max = 200) => String(v ?? "").trim().slice(0, max);
 
-const BASE = new Set(["pv", "call", "wa", "form_start", "cta"]);
-const NAMED = /^(s|f|fp|fe|k|sub|lead|x|xk|c|pk|dv):[a-z0-9_-]{1,40}$/i;
+const BASE = new Set(["pv", "call", "wa", "vb", "form_start", "cta"]);
+const NAMED = /^(s|f|fp|fe|k|sub|lead|x|xk|c|pk|dv|m):[a-z0-9_-]{1,40}$/i;
 const okEvent = (e) => BASE.has(e) || NAMED.test(e);
 const BOT = /bot|crawl|spider|slurp|preview|facebookexternalhit|headless|lighthouse|pingdom|monitor/i;
 
