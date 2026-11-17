@@ -115,21 +115,42 @@ svg text{font:11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:v
 @media(max-width:600px){.hd{flex-wrap:wrap}.tabs{order:3;width:100%;margin-left:0}.tabs button{flex:1;padding:6px 4px}.lv{grid-template-columns:1fr 64px 70px}.lv .bar{grid-column:1/-1;grid-row:2}.lv.sm{grid-template-columns:1fr 50px}}
 /* prihod */
 .hero{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:12px;margin:14px 0 12px}
-.rev{background:var(--ink);border-color:var(--ink);color:#fff;padding:22px 24px 0;display:flex;flex-direction:column;overflow:hidden;min-height:268px}
-.rev .l{color:#A1A1A8;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
-.rev .l b{color:#fff;font-weight:700}
-.rev-v{font-size:clamp(64px,8.5vw,96px);font-weight:800;letter-spacing:-.04em;line-height:1;margin:14px 0 14px;font-variant-numeric:tabular-nums;white-space:nowrap}
-.rev-v .cur{color:var(--p);font-size:.55em;margin-left:.14em;letter-spacing:0}
-.rev-m{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;color:#D4D4D8;font-size:14px}
-.dlt{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:700;background:rgba(255,255,255,.08);color:#D4D4D8}
-.dlt.up{background:rgba(34,197,94,.16);color:#4ADE80}.dlt.dn{background:rgba(225,29,46,.22);color:#FF8A94}
-.rev-last{color:#A1A1A8;font-size:13px;margin-top:8px}.rev-last b{color:#fff;font-weight:600}
-.spark{display:block;width:calc(100% + 48px);height:64px;margin:auto -24px 0;padding-top:16px}
-.spark-e{height:22px}
+.rev{position:relative;overflow:hidden;color:#fff;border:0;padding:22px 26px 0;display:flex;flex-direction:column;
+  background:radial-gradient(90% 120% at 100% 0%,rgba(225,29,46,.34) 0%,rgba(225,29,46,.08) 38%,rgba(225,29,46,0) 62%),linear-gradient(160deg,#1A1A1E 0%,#0E0E10 100%);
+  box-shadow:0 18px 40px -22px rgba(20,20,22,.55),inset 0 1px 0 rgba(255,255,255,.06)}
+.rev::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 1px 1px,rgba(255,255,255,.07) 1px,transparent 0) 0 0/18px 18px;-webkit-mask-image:linear-gradient(200deg,#000 0%,transparent 60%);mask-image:linear-gradient(200deg,#000 0%,transparent 60%)}
+.rev>*{position:relative}
+.rev-h{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.rev-h .l{display:flex;align-items:center;gap:8px;color:#9B9BA3;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.rev-h .l b{color:#fff;font-weight:700}
+.rev-h .dot{width:8px;height:8px;border-radius:50%;background:var(--p);box-shadow:0 0 0 0 rgba(225,29,46,.7);animation:dotP 2.2s ease-out infinite}
+@keyframes dotP{0%{box-shadow:0 0 0 0 rgba(225,29,46,.7)}70%,100%{box-shadow:0 0 0 8px rgba(225,29,46,0)}}
+.dlt{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;font-size:12px;font-weight:600;background:rgba(255,255,255,.07);color:#C9C9CF;border:1px solid rgba(255,255,255,.06)}
+.dlt b{font-weight:800;font-size:13px}
+.dlt.up b{color:#4ADE80}.dlt.dn b{color:#FF7A86}
+.rev-v{font-size:clamp(68px,9vw,108px);font-weight:800;letter-spacing:-.045em;line-height:.95;margin:18px 0 4px;font-variant-numeric:tabular-nums;white-space:nowrap;display:flex;align-items:flex-start}
+.rev-v .cur{color:var(--p);font-size:.4em;letter-spacing:0;margin:.1em 0 0 .12em;font-weight:800}
+.rev-sub{color:#9B9BA3;font-size:14px;margin-bottom:18px}.rev-sub b{color:#E4E4E7;font-weight:600}
+.rbars{display:flex;align-items:flex-end;gap:3px;height:92px;padding-top:20px}
+.rb{flex:1;min-width:0;height:100%;display:flex;align-items:flex-end;position:relative}
+.rb i{display:block;width:100%;min-height:4px;border-radius:4px 4px 2px 2px;background:linear-gradient(180deg,#FF4A5A 0%,#E11D2E 55%,#B5121F 100%);box-shadow:0 0 18px -2px rgba(225,29,46,.55);transform-origin:bottom;animation:rbG .8s cubic-bezier(.2,.9,.25,1) both;animation-delay:calc(var(--i)*14ms)}
+.rb.z i{height:4px!important;background:rgba(255,255,255,.09);box-shadow:none}
+.rb.z.td i{background:rgba(255,255,255,.3)}
+.rb.ft i{background:rgba(255,255,255,.04)}
+.rb em{position:absolute;left:50%;transform:translateX(-50%);font-style:normal;font-size:11px;font-weight:700;color:#fff;white-space:nowrap;margin-bottom:5px}
+.rbars.still .rb i{animation:none}
+@keyframes rbG{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.rax{display:flex;justify-content:space-between;color:#6E6E76;font-size:11px;font-weight:600;margin-top:8px}
+.rev-s{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:18px -26px 0;border-top:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02)}
+.rev-s>div{padding:14px 26px 16px;min-width:0}
+.rev-s>div+div{border-left:1px solid rgba(255,255,255,.08)}
+.rev-s .k{color:#7D7D85;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em}
+.rev-s .v{font-size:19px;font-weight:700;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rev-s .s{color:#8E8E96;font-size:12px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hero-side{display:grid;gap:12px}
 .hero-side .kpi{display:flex;flex-direction:column;justify-content:center}
-.hero-side .kpi .v{font-size:42px;line-height:1.1}
-.kpis.sm{grid-template-columns:repeat(5,minmax(0,1fr));margin:0 0 12px}
+.hero-side .kpi .v{font-size:38px;line-height:1.1}
+.kpis.sm{grid-template-columns:repeat(4,minmax(0,1fr));margin:0 0 12px}
 .kpis.sm .kpi{padding:13px 14px}.kpis.sm .kpi .v{font-size:22px}
 @keyframes winGlow{0%{box-shadow:0 0 0 0 rgba(225,29,46,.75)}100%{box-shadow:0 0 0 24px rgba(225,29,46,0)}}
 .rev.win{animation:winGlow 1s ease-out 3}
@@ -142,10 +163,10 @@ svg text{font:11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:v
 .winb .s{font-size:13px;color:#D4D4D8}
 @keyframes winIn{from{opacity:0;transform:translate(-50%,-18px) scale(.8)}to{opacity:1;transform:translate(-50%,0) scale(1)}}
 @keyframes winOut{from{opacity:1;transform:translate(-50%,0) scale(1)}to{opacity:0;transform:translate(-50%,-12px) scale(.95)}}
-@media(max-width:860px){.hero{grid-template-columns:1fr}.hero-side{grid-template-columns:1fr 1fr}}
-@media(max-width:700px){.kpis.sm{grid-template-columns:repeat(2,minmax(0,1fr))}.kpis.sm .kpi:first-child{grid-column:span 2}}
-@media(max-width:600px){.rev{padding:18px 18px 0;min-height:0}.spark{width:calc(100% + 36px);margin:0 -18px}.hero-side .kpi .v{font-size:32px}.winb{top:70px;min-width:0;width:calc(100% - 32px)}}
-@media(prefers-reduced-motion:reduce){.rev.win,.winb,.winb.out{animation:none}}
+@media(max-width:860px){.hero{grid-template-columns:1fr}.hero-side{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:700px){.kpis.sm{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.rev{padding:18px 18px 0}.rev-v{margin-top:14px}.rbars{gap:2px;height:80px}.rev-s{grid-template-columns:1fr 1fr;margin:16px -18px 0}.rev-s>div{padding:12px 18px 14px}.rev-s>div:last-child{grid-column:span 2;border-left:0;border-top:1px solid rgba(255,255,255,.08)}.hero-side{grid-template-columns:1fr 1fr}.hero-side .kpi:last-child{grid-column:span 2}.hero-side .kpi .v{font-size:32px}.winb{top:70px;min-width:0;width:calc(100% - 32px)}}
+@media(prefers-reduced-motion:reduce){.rev.win,.winb,.winb.out,.rb i,.rev-h .dot{animation:none}}
 </style>
 </head>
 <body>
@@ -328,10 +349,10 @@ function renderPregled(){
   renderHero(R, rev, sales);
   $('dSide').innerHTML = [
     {l:'Kupili', v:sales.length, s:'zatvoreno '+pct(sales.length,leads.length)+' prijava'},
-    {l:'Prijave', v:leads.length, s:'konverzija '+pct(leads.length,vis)+' · ceo upitnik '+leads.filter(upPun).length, hl:1}
+    {l:'Prijave', v:leads.length, s:'konverzija '+pct(leads.length,vis)+' · ceo upitnik '+leads.filter(upPun).length, hl:1},
+    {l:'Posetioci', v:vis, s:sum('ev','pv')+' prikaza stranice'}
   ].map(kpiHtml).join('');
   $('gKpi').innerHTML = [
-    {l:'Posetioci', v:vis, s:sum('ev','pv')+' prikaza stranice'},
     {l:'Klik „Pozovi"', v:call, s:pct(call,vis)+' posetilaca'},
     {l:'Klik WhatsApp', v:wa, s:pct(wa,vis)+' posetilaca'},
     {l:'Klik Viber', v:vb, s:pct(vb,vis)+' posetilaca'},
@@ -353,13 +374,14 @@ function renderPregled(){
 const kpiHtml = k => `<div class="card kpi ${k.hl?'hl':''}"><div class="l">${k.l}</div><div class="v">${k.v}</div><div class="s">${k.s}</div></div>`;
 const RM = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch(e){ return false; } };
 const shiftDay = (s,n) => { const d=new Date(s+'T12:00:00'); d.setDate(d.getDate()+n); return bgDay(d); };
-const prodaja = n => (n%10>=2 && n%10<=4 && (n%100<12 || n%100>14)) ? 'prodaje' : 'prodaja';
+const pl = (n,a,b) => (n%10>=2 && n%10<=4 && (n%100<12 || n%100>14)) ? b : a;
+const prodaja = n => pl(n,'prodaja','prodaje');
 const revIn = R => S.leads.filter(l=>l.status==='kupio' && inR(saleDay(l),R)).reduce((n,l)=>n+(Number(l.vrednost)||0),0);
 const PER_TXT = { '1':['danas','juče'], '7':['poslednjih 7 dana','prethodnih 7 dana'], '30':['poslednjih 30 dana','prethodnih 30 dana'], 'm':['ovaj mesec','isti deo prošlog meseca'], 'all':['ukupno',''] };
 
 // niz dana u periodu (max poslednjih 60)
 function dayList(R, max=60){
-  const start = R[0]==='0000-00-00' ? (S.days[0]?.datum || [...S.leads].map(leadDay).filter(Boolean).sort()[0] || R[1]) : R[0];
+  const start = R[0]==='0000-00-00' ? ([S.days[0]?.datum, ...S.leads.map(leadDay), ...S.leads.filter(l=>l.status==='kupio').map(saleDay)].filter(Boolean).sort()[0] || R[1]) : R[0];
   const list=[]; const d=new Date(start+'T12:00:00');
   while(bgDay(d)<=R[1] && list.length<400){ list.push(bgDay(d)); d.setDate(d.getDate()+1); }
   return list.slice(-max);
@@ -376,30 +398,55 @@ function prevRange(){
   const n = Number(S.period); return [shiftDay(a,-n), shiftDay(b,-n)];
 }
 
+const PKG = {START:199, BUSINESS:299, SHOP:499};
+const dmy = d => Number(d.slice(8))+'. '+Number(d.slice(5,7))+'.';
+const bgHour = iso => Number(new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Belgrade',hour:'2-digit',hourCycle:'h23'}).format(new Date(iso)));
+const rel = iso => { const m=(Date.now()-new Date(iso))/60000; if(m<1) return 'upravo'; if(m<60) return 'pre '+Math.round(m)+' min'; const h=m/60; if(h<24) return 'pre '+Math.round(h)+' h'; const d=Math.round(h/24); return d===1?'juče':'pre '+d+' '+(d%10===1&&d%100!==11?'dan':'dana'); };
+
+// prihod po danu (za Danas po satu); duži periodi se grupišu da bude najviše 60 stubića
+function revBuckets(R, sales){
+  const val = l => Number(l.vrednost)||0;
+  if (S.period==='1'){
+    const hNow = bgHour(new Date().toISOString());
+    const b = Array.from({length:24},(_,h)=>({t:String(h).padStart(2,'0')+':00', v:0, n:0, td:h===hNow, ft:h>hNow}));
+    sales.forEach(l=>{ const x=b[bgHour(l.kupljeno||l.updatedAt||l.createdAt)]; if(x){ x.v+=val(l); x.n++; } });
+    return { b, ax:['00h','12h','23h'] };
+  }
+  const ds = dayList(R, 400), size = Math.max(1, Math.ceil(ds.length/60)), b = [];
+  for (let i=0;i<ds.length;i+=size){ const a=ds[i], z=ds[Math.min(i+size-1, ds.length-1)]; b.push({a, z, t: a===z? dmy(a) : dmy(a)+' – '+dmy(z), v:0, n:0}); }
+  sales.forEach(l=>{ const d=saleDay(l); const x=b.find(k=>d>=k.a && d<=k.z); if(x){ x.v+=val(l); x.n++; } });
+  if (b.length) b[b.length-1].td = true;
+  const mid = b[Math.floor((b.length-1)/2)];
+  return { b, ax: b.length>2 ? [dmy(b[0].a), dmy(mid.a), 'danas'] : b.length ? [dmy(b[0].a), 'danas'] : [] };
+}
+
 function renderHero(R, rev, sales){
   const P = prevRange(), prev = P ? revIn(P) : null, [tNow, tPrev] = PER_TXT[S.period] || ['',''];
   let dl = '';
   if (prev!==null && (rev || prev)){
     const d = rev - prev;
-    dl = `<span class="dlt ${d>0?'up':d<0?'dn':''}">${d>0?'▲ +'+eur(d):d<0?'▼ −'+eur(-d):'isto kao'} ${d?'u odnosu na ':''}${tPrev}</span>`;
+    dl = d ? `<span class="dlt ${d>0?'up':'dn'}"><b>${d>0?'▲ +':'▼ −'}${eur(Math.abs(d))}</b> u odnosu na ${tPrev}</span>` : `<span class="dlt">isto kao ${tPrev}</span>`;
   }
-  const all = S.leads.filter(l=>l.status==='kupio').sort((a,b)=>String(b.kupljeno||b.updatedAt||'').localeCompare(String(a.kupljeno||a.updatedAt||'')));
-  const lst = all[0];
-  // kumulativni prihod po danima
-  const ds = dayList(R);
-  let sp = '<div class="spark-e"></div>';
-  if (ds.length > 1){
-    let cum = S.leads.filter(l=>l.status==='kupio' && inR(saleDay(l),R) && saleDay(l)<ds[0]).reduce((n,l)=>n+(Number(l.vrednost)||0),0);
-    const by = {}; sales.forEach(l=>{ const k=saleDay(l); by[k]=(by[k]||0)+(Number(l.vrednost)||0); });
-    const vals = ds.map(x=>cum+=by[x]||0), mx = Math.max(1, ...vals);
-    const pts = vals.map((v,i)=>`${(i/(ds.length-1)*300).toFixed(1)},${(62-v/mx*54).toFixed(1)}`);
-    sp = `<svg class="spark" viewBox="0 0 300 64" preserveAspectRatio="none" aria-hidden="true"><path d="M0,64 L${pts.join(' L')} L300,64 Z" fill="rgba(225,29,46,.22)"/><polyline points="${pts.join(' ')}" fill="none" stroke="#E11D2E" stroke-width="2.5" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>`;
-  }
-  $('cRev').innerHTML = `<div class="l">Prihod · <b>${tNow}</b></div>
+  // stubići
+  const {b, ax} = revBuckets(R, sales), mx = Math.max(1, ...b.map(x=>x.v)), hits = b.filter(x=>x.v).length;
+  const key = S.period+'|'+rev+'|'+b.length; const still = S.heroKey===key; S.heroKey = key;
+  const bars = b.map((x,i)=>{ const h = x.v ? Math.max(8, x.v/mx*100) : 0;
+    return `<div class="rb ${x.v?'':'z'} ${x.td?'td':''} ${x.ft?'ft':''}" style="--i:${i}" title="${x.t}: ${x.v?eur(x.v)+' · '+x.n+' '+prodaja(x.n):'bez prodaje'}">${x.v && hits<=6 ? `<em style="bottom:${h}%">${eur(x.v)}</em>`:''}<i style="height:${h}%"></i></div>`; }).join('');
+  // donja traka
+  const open = S.leads.filter(l=>['nova','u radu','poslato'].includes(l.status));
+  const openV = open.reduce((n,l)=>n+(Number(l.vrednost)||PKG[l.paket]||0),0);
+  const lst = S.leads.filter(l=>l.status==='kupio').sort((a,c)=>String(c.kupljeno||c.updatedAt||'').localeCompare(String(a.kupljeno||a.updatedAt||'')))[0];
+  $('cRev').innerHTML = `
+    <div class="rev-h"><div class="l"><span class="dot"></span>Prihod · <b>${tNow}</b></div>${dl}</div>
     <div class="rev-v"><span id="nRev">0</span><span class="cur">€</span></div>
-    <div class="rev-m"><span>${sales.length} ${prodaja(sales.length)}${sales.length?' · prosek '+eur(rev/sales.length):''}</span>${dl}</div>
-    ${lst?`<div class="rev-last">Poslednja prodaja: <b>${esc(lst.ime||lst.firma||'bez imena')}</b>${lst.paket?' · '+esc(lst.paket):''} · ${eur(lst.vrednost)} · ${fmtD(lst.kupljeno||lst.updatedAt)}</div>`:''}
-    ${sp}`;
+    <div class="rev-sub"><b>${sales.length} ${prodaja(sales.length)}</b>${S.period==='all'?' do sada':' u periodu'}</div>
+    <div class="rbars ${still?'still':''}">${bars}</div>
+    <div class="rax">${ax.map(t=>`<span>${t}</span>`).join('')}</div>
+    <div class="rev-s">
+      <div><div class="k">Prosek po prodaji</div><div class="v">${sales.length? eur(rev/sales.length) : '—'}</div><div class="s">${sales.length? 'najveća '+eur(Math.max(...sales.map(l=>Number(l.vrednost)||0))) : 'još nema prodaja'}</div></div>
+      <div><div class="k">Otvorene prijave</div><div class="v">${openV? eur(openV) : open.length}</div><div class="s">${open.length} ${pl(open.length,'prijava','prijave')} u igri</div></div>
+      <div><div class="k">Poslednja prodaja</div><div class="v">${lst? esc(lst.ime||lst.firma||'bez imena') : '—'}</div><div class="s">${lst? [lst.paket?esc(lst.paket):'', eur(lst.vrednost), rel(lst.kupljeno||lst.updatedAt)].filter(Boolean).join(' · ') : 'čeka se prva'}</div></div>
+    </div>`;
   animRev(S.revShown ?? 0, rev, 800);
 }
 
