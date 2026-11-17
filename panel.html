@@ -113,6 +113,39 @@ svg text{font:11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:v
 .tbl tr.grp td{background:#F6F5F2;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.03em;color:var(--mut);padding:7px 10px}
 .tbl td.hot{color:var(--p);font-weight:700}
 @media(max-width:600px){.hd{flex-wrap:wrap}.tabs{order:3;width:100%;margin-left:0}.tabs button{flex:1;padding:6px 4px}.lv{grid-template-columns:1fr 64px 70px}.lv .bar{grid-column:1/-1;grid-row:2}.lv.sm{grid-template-columns:1fr 50px}}
+/* prihod */
+.hero{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:12px;margin:14px 0 12px}
+.rev{background:var(--ink);border-color:var(--ink);color:#fff;padding:22px 24px 0;display:flex;flex-direction:column;overflow:hidden;min-height:268px}
+.rev .l{color:#A1A1A8;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.rev .l b{color:#fff;font-weight:700}
+.rev-v{font-size:clamp(64px,8.5vw,96px);font-weight:800;letter-spacing:-.04em;line-height:1;margin:14px 0 14px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.rev-v .cur{color:var(--p);font-size:.55em;margin-left:.14em;letter-spacing:0}
+.rev-m{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;color:#D4D4D8;font-size:14px}
+.dlt{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:700;background:rgba(255,255,255,.08);color:#D4D4D8}
+.dlt.up{background:rgba(34,197,94,.16);color:#4ADE80}.dlt.dn{background:rgba(225,29,46,.22);color:#FF8A94}
+.rev-last{color:#A1A1A8;font-size:13px;margin-top:8px}.rev-last b{color:#fff;font-weight:600}
+.spark{display:block;width:calc(100% + 48px);height:64px;margin:auto -24px 0;padding-top:16px}
+.spark-e{height:22px}
+.hero-side{display:grid;gap:12px}
+.hero-side .kpi{display:flex;flex-direction:column;justify-content:center}
+.hero-side .kpi .v{font-size:42px;line-height:1.1}
+.kpis.sm{grid-template-columns:repeat(5,minmax(0,1fr));margin:0 0 12px}
+.kpis.sm .kpi{padding:13px 14px}.kpis.sm .kpi .v{font-size:22px}
+@keyframes winGlow{0%{box-shadow:0 0 0 0 rgba(225,29,46,.75)}100%{box-shadow:0 0 0 24px rgba(225,29,46,0)}}
+.rev.win{animation:winGlow 1s ease-out 3}
+.cf{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:80}
+.winb{position:fixed;left:50%;top:84px;z-index:81;background:var(--ink);color:#fff;border-radius:18px;padding:16px 30px 18px;text-align:center;box-shadow:0 24px 60px -12px rgba(0,0,0,.5);pointer-events:none;min-width:250px;animation:winIn .55s cubic-bezier(.2,1.5,.4,1) both}
+.winb.out{animation:winOut .4s ease-in forwards}
+.winb .k{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#A1A1A8}
+.winb .v{font-size:48px;font-weight:800;letter-spacing:-.03em;line-height:1.1;margin:4px 0 2px}
+.winb .v span{color:var(--p)}
+.winb .s{font-size:13px;color:#D4D4D8}
+@keyframes winIn{from{opacity:0;transform:translate(-50%,-18px) scale(.8)}to{opacity:1;transform:translate(-50%,0) scale(1)}}
+@keyframes winOut{from{opacity:1;transform:translate(-50%,0) scale(1)}to{opacity:0;transform:translate(-50%,-12px) scale(.95)}}
+@media(max-width:860px){.hero{grid-template-columns:1fr}.hero-side{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.kpis.sm{grid-template-columns:repeat(2,minmax(0,1fr))}.kpis.sm .kpi:first-child{grid-column:span 2}}
+@media(max-width:600px){.rev{padding:18px 18px 0;min-height:0}.spark{width:calc(100% + 36px);margin:0 -18px}.hero-side .kpi .v{font-size:32px}.winb{top:70px;min-width:0;width:calc(100% - 32px)}}
+@media(prefers-reduced-motion:reduce){.rev.win,.winb,.winb.out{animation:none}}
 </style>
 </head>
 <body>
@@ -146,7 +179,11 @@ svg text{font:11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:v
       <div class="chips" id="cPeriod"></div>
       <span class="sub" id="sAsOf"></span>
     </div>
-    <div class="grid kpis" id="gKpi"></div>
+    <div class="hero">
+      <div class="card rev" id="cRev"></div>
+      <div class="hero-side" id="dSide"></div>
+    </div>
+    <div class="grid kpis sm" id="gKpi"></div>
     <div class="grid two">
       <div class="card"><h2>Levak</h2><div class="fn" id="dFunnel"></div><p class="help">Procenat pored broja je u odnosu na korak iznad.</p></div>
       <div class="card"><h2>Gde su prijave sada</h2><div class="grid pipe" id="dPipe"></div><p class="help">Sve prijave, bez obzira na izabrani period.</p></div>
@@ -237,14 +274,22 @@ $('fLogin').addEventListener('submit', async e => {
   catch(err){ $('eLogin').textContent = err.message==='401' ? 'Pogrešan ključ.' : 'Greška: '+err.message; }
 });
 $('bOut').onclick = () => { ls('rf_key', null); location.hash=''; location.reload(); };
-function showApp(){ $('vLogin').classList.add('hide'); $('vApp').classList.remove('hide'); render(); openFromHash(); }
+function showApp(){ $('vLogin').classList.add('hide'); $('vApp').classList.remove('hide'); render(); openFromHash(); syncSales(); }
 
 async function load(){
   const [a,b] = await Promise.all([api('/.netlify/functions/leads'), api('/api/stats').catch(e=>{ if(e.message==='401') throw e; return {days:[]}; })]);
-  S.leads = a.items || []; S.days = b.days || [];
+  S.leads = a.items || []; S.days = b.days || []; S.loadedAt = Date.now();
   $('sAsOf').textContent = 'Osveženo ' + new Date().toLocaleTimeString('sr-RS',{hour:'2-digit',minute:'2-digit'});
 }
-$('bRefresh').onclick = async () => { try{ await load(); render(); toast('Osveženo'); }catch(e){ toast('Greška: '+e.message); } };
+$('bRefresh').onclick = async () => { try{ await load(); render(); syncSales(); toast('Osveženo'); }catch(e){ toast('Greška: '+e.message); } };
+// tiho osvežavanje kad se vratiš na tab i na 2 min (ne dok je otvorena prijava)
+async function quietRefresh(){
+  if (document.hidden || $('vApp').classList.contains('hide') || !$('dDr').classList.contains('hide')) return;
+  if (Date.now() - (S.loadedAt||0) < 55000) return;
+  try { await load(); render(); syncSales(); } catch(e){}
+}
+document.addEventListener('visibilitychange', quietRefresh);
+setInterval(quietRefresh, 120000);
 
 document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => {
   document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on', x===b));
@@ -280,17 +325,18 @@ function renderPregled(){
   const leads = S.leads.filter(l=>inR(leadDay(l),R));
   const sales = S.leads.filter(l=>l.status==='kupio' && inR(saleDay(l),R));
   const rev = sales.reduce((n,l)=>n+(Number(l.vrednost)||0),0);
-  const K = [
+  renderHero(R, rev, sales);
+  $('dSide').innerHTML = [
+    {l:'Kupili', v:sales.length, s:'zatvoreno '+pct(sales.length,leads.length)+' prijava'},
+    {l:'Prijave', v:leads.length, s:'konverzija '+pct(leads.length,vis)+' · ceo upitnik '+leads.filter(upPun).length, hl:1}
+  ].map(kpiHtml).join('');
+  $('gKpi').innerHTML = [
     {l:'Posetioci', v:vis, s:sum('ev','pv')+' prikaza stranice'},
     {l:'Klik „Pozovi"', v:call, s:pct(call,vis)+' posetilaca'},
     {l:'Klik WhatsApp', v:wa, s:pct(wa,vis)+' posetilaca'},
     {l:'Klik Viber', v:vb, s:pct(vb,vis)+' posetilaca'},
-    {l:'Počeli formu', v:fs, s:pct(fs,vis)+' posetilaca'},
-    {l:'Prijave', v:leads.length, s:'konverzija '+pct(leads.length,vis)+' · ceo upitnik '+leads.filter(upPun).length, hl:1},
-    {l:'Kupili', v:sales.length, s:'zatvoreno '+pct(sales.length,leads.length)+' prijava'},
-    {l:'Prihod', v:eur(rev), s: sales.length? 'prosek '+eur(rev/sales.length):'—', hl:1}
-  ];
-  $('gKpi').innerHTML = K.map(k=>`<div class="card kpi ${k.hl?'hl':''}"><div class="l">${k.l}</div><div class="v">${k.v}</div><div class="s">${k.s}</div></div>`).join('');
+    {l:'Počeli formu', v:fs, s:pct(fs,vis)+' posetilaca'}
+  ].map(kpiHtml).join('');
 
   const F = [['Posetioci',vis],['Počeli formu',fs],['Prijave',leads.length],['Kupili',sales.length]];
   const mx = Math.max(1, ...F.map(f=>f[1]));
@@ -304,12 +350,135 @@ function renderPregled(){
   renderIzvori(R, days, leads, sales);
 }
 
-function renderChart(R){
-  // niz dana u periodu (max 60 poslednjih)
-  let start = R[0]==='0000-00-00' ? (S.days[0]?.datum || [...S.leads].map(leadDay).sort()[0] || R[1]) : R[0];
+const kpiHtml = k => `<div class="card kpi ${k.hl?'hl':''}"><div class="l">${k.l}</div><div class="v">${k.v}</div><div class="s">${k.s}</div></div>`;
+const RM = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch(e){ return false; } };
+const shiftDay = (s,n) => { const d=new Date(s+'T12:00:00'); d.setDate(d.getDate()+n); return bgDay(d); };
+const prodaja = n => (n%10>=2 && n%10<=4 && (n%100<12 || n%100>14)) ? 'prodaje' : 'prodaja';
+const revIn = R => S.leads.filter(l=>l.status==='kupio' && inR(saleDay(l),R)).reduce((n,l)=>n+(Number(l.vrednost)||0),0);
+const PER_TXT = { '1':['danas','juče'], '7':['poslednjih 7 dana','prethodnih 7 dana'], '30':['poslednjih 30 dana','prethodnih 30 dana'], 'm':['ovaj mesec','isti deo prošlog meseca'], 'all':['ukupno',''] };
+
+// niz dana u periodu (max poslednjih 60)
+function dayList(R, max=60){
+  const start = R[0]==='0000-00-00' ? (S.days[0]?.datum || [...S.leads].map(leadDay).filter(Boolean).sort()[0] || R[1]) : R[0];
   const list=[]; const d=new Date(start+'T12:00:00');
   while(bgDay(d)<=R[1] && list.length<400){ list.push(bgDay(d)); d.setDate(d.getDate()+1); }
-  const ds = list.slice(-60);
+  return list.slice(-max);
+}
+// isti period pre ovog (za poređenje prihoda)
+function prevRange(){
+  const [a,b] = range();
+  if (S.period==='all') return null;
+  if (S.period==='m'){
+    const d=new Date(a+'T12:00:00'); d.setMonth(d.getMonth()-1); const pa=bgDay(d);
+    const last=new Date(d.getFullYear(), d.getMonth()+1, 0, 12).getDate();
+    return [pa, pa.slice(0,8)+String(Math.min(Number(b.slice(8)), last)).padStart(2,'0')];
+  }
+  const n = Number(S.period); return [shiftDay(a,-n), shiftDay(b,-n)];
+}
+
+function renderHero(R, rev, sales){
+  const P = prevRange(), prev = P ? revIn(P) : null, [tNow, tPrev] = PER_TXT[S.period] || ['',''];
+  let dl = '';
+  if (prev!==null && (rev || prev)){
+    const d = rev - prev;
+    dl = `<span class="dlt ${d>0?'up':d<0?'dn':''}">${d>0?'▲ +'+eur(d):d<0?'▼ −'+eur(-d):'isto kao'} ${d?'u odnosu na ':''}${tPrev}</span>`;
+  }
+  const all = S.leads.filter(l=>l.status==='kupio').sort((a,b)=>String(b.kupljeno||b.updatedAt||'').localeCompare(String(a.kupljeno||a.updatedAt||'')));
+  const lst = all[0];
+  // kumulativni prihod po danima
+  const ds = dayList(R);
+  let sp = '<div class="spark-e"></div>';
+  if (ds.length > 1){
+    let cum = S.leads.filter(l=>l.status==='kupio' && inR(saleDay(l),R) && saleDay(l)<ds[0]).reduce((n,l)=>n+(Number(l.vrednost)||0),0);
+    const by = {}; sales.forEach(l=>{ const k=saleDay(l); by[k]=(by[k]||0)+(Number(l.vrednost)||0); });
+    const vals = ds.map(x=>cum+=by[x]||0), mx = Math.max(1, ...vals);
+    const pts = vals.map((v,i)=>`${(i/(ds.length-1)*300).toFixed(1)},${(62-v/mx*54).toFixed(1)}`);
+    sp = `<svg class="spark" viewBox="0 0 300 64" preserveAspectRatio="none" aria-hidden="true"><path d="M0,64 L${pts.join(' L')} L300,64 Z" fill="rgba(225,29,46,.22)"/><polyline points="${pts.join(' ')}" fill="none" stroke="#E11D2E" stroke-width="2.5" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>`;
+  }
+  $('cRev').innerHTML = `<div class="l">Prihod · <b>${tNow}</b></div>
+    <div class="rev-v"><span id="nRev">0</span><span class="cur">€</span></div>
+    <div class="rev-m"><span>${sales.length} ${prodaja(sales.length)}${sales.length?' · prosek '+eur(rev/sales.length):''}</span>${dl}</div>
+    ${lst?`<div class="rev-last">Poslednja prodaja: <b>${esc(lst.ime||lst.firma||'bez imena')}</b>${lst.paket?' · '+esc(lst.paket):''} · ${eur(lst.vrednost)} · ${fmtD(lst.kupljeno||lst.updatedAt)}</div>`:''}
+    ${sp}`;
+  animRev(S.revShown ?? 0, rev, 800);
+}
+
+// brojač prihoda
+let revAnim = 0;
+function animRev(from, to, ms){
+  const el = $('nRev'); if (!el) return;
+  const id = ++revAnim; S.revShown = to;
+  const f = n => Math.round(n).toLocaleString('sr-RS');
+  if (RM() || from===to || !ms){ el.textContent = f(to); return; }
+  const t0 = performance.now();
+  el.textContent = f(from);
+  const step = now => { if (id!==revAnim) return; const p=Math.min(1,(now-t0)/ms), e=1-Math.pow(1-p,3); el.textContent = f(from+(to-from)*e); if (p<1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+
+// konfete
+function confetti(){
+  if (RM()) return;
+  const c = document.createElement('canvas'); c.className='cf'; document.body.appendChild(c);
+  const W = innerWidth, H = innerHeight, dpr = Math.min(2, devicePixelRatio||1);
+  c.width = W*dpr; c.height = H*dpr; const x = c.getContext('2d'); x.scale(dpr,dpr);
+  const COL = ['#E11D2E','#B5121F','#141416','#F5B301','#FFC93C','#0B7F4F','#FF6B78'];
+  const P = [], R_ = Math.random;
+  const add = (px,py,vx,vy,i) => P.push({x:px,y:py,vx,vy,w:7+R_()*7,h:9+R_()*9,r:R_()*6.28,vr:(R_()-.5)*.35,t:R_()*6.28,vt:.06+R_()*.12,c:COL[i%COL.length],o:R_()<.22});
+  const burst = (px,py,ang,n) => { for(let i=0;i<n;i++){ const a=ang+(R_()-.5)*.95, s=(15+R_()*17)*Math.min(1.25,Math.max(.75,H/800)); add(px,py,Math.cos(a)*s,Math.sin(a)*s,i); } };
+  burst(-10, H*.95, -Math.PI*.36, 110);
+  burst(W+10, H*.95, -Math.PI*.64, 110);
+  for (let i=0;i<70;i++) add(R_()*W, -20-R_()*H*.5, (R_()-.5)*3, 2+R_()*3, i);
+  const T = 4200; let t0 = null, last = null;
+  const f = now => {
+    if (t0===null){ t0=now; last=now; }
+    const el = now-t0, k = Math.min(3,(now-last)/16.67); last = now;
+    x.clearRect(0,0,W,H);
+    x.globalAlpha = el > T-900 ? Math.max(0,(T-el)/900) : 1;
+    for (const p of P){
+      p.vx *= Math.pow(.965,k); p.vy = p.vy*Math.pow(.965,k) + .32*k;
+      p.x += p.vx*k + Math.sin(p.t)*.6*k; p.y += p.vy*k; p.r += p.vr*k; p.t += p.vt*k;
+      if (p.y > H+30) continue;
+      x.save(); x.translate(p.x,p.y); x.rotate(p.r); x.fillStyle = p.c;
+      if (p.o){ x.beginPath(); x.arc(0,0,p.w/2.4,0,6.283); x.fill(); }
+      else { const sy = Math.abs(Math.cos(p.t)); x.fillRect(-p.w/2,-p.h*sy/2,p.w,p.h*sy+.5); }
+      x.restore();
+    }
+    if (el < T) requestAnimationFrame(f); else c.remove();
+  };
+  requestAnimationFrame(f);
+}
+
+// proslava: konfete, baner i brojač
+function celebrate(list){
+  const n = list.length, amt = list.reduce((s,l)=>s+(Number(l.vrednost)||0),0);
+  const inP = list.filter(l=>inR(saleDay(l),range())).reduce((s,l)=>s+(Number(l.vrednost)||0),0);
+  const card = $('cRev');
+  if (card && !$('tPregled').classList.contains('hide')){ card.classList.remove('win'); void card.offsetWidth; card.classList.add('win'); }
+  if (inP) animRev(Math.max(0,(S.revShown||0)-inP), S.revShown||0, 1800);
+  confetti();
+  document.querySelectorAll('.winb').forEach(b=>b.remove());
+  const b = document.createElement('div'); b.className='winb';
+  const who = n===1 ? [list[0].ime||list[0].firma, list[0].paket].filter(Boolean).map(esc).join(' · ') : n+(prodaja(n)==='prodaje'?' nove prodaje':' novih prodaja');
+  b.innerHTML = `<div class="k">${n===1?'Nova prodaja':'Nove prodaje'}</div><div class="v">${amt?'+'+Math.round(amt).toLocaleString('sr-RS')+' <span>€</span>':'Prodato'}</div>${who?`<div class="s">${who}</div>`:''}`;
+  document.body.appendChild(b);
+  setTimeout(()=>{ b.classList.add('out'); setTimeout(()=>b.remove(),450); }, 3800);
+}
+
+// nove prodaje od poslednjeg otvaranja (i sa drugog uređaja) se proslave jednom
+function syncSales(){
+  const sold = S.leads.filter(l=>l.status==='kupio');
+  let seen = S.sold;
+  if (!seen){ try { const j = JSON.parse(ls('rf_sold')||'null'); if (Array.isArray(j)) seen = new Set(j); } catch(e){} }
+  S.sold = new Set(sold.map(l=>l.id));
+  ls('rf_sold', JSON.stringify([...S.sold]));
+  if (!seen) return;
+  const fresh = sold.filter(l=>!seen.has(l.id));
+  if (fresh.length) setTimeout(()=>celebrate(fresh), 150);
+}
+
+function renderChart(R){
+  const ds = dayList(R);
   const vis = ds.map(x=>((S.days.find(y=>y.datum===x)||{}).uq||{}).pv||0);
   const ld = ds.map(x=>S.leads.filter(l=>leadDay(l)===x).length);
   if (!vis.some(Boolean) && !ld.some(Boolean)) { $('dChart').innerHTML='<div class="empty">Još nema podataka za ovaj period.</div>'; return; }
@@ -522,13 +691,14 @@ function openLead(id){
     if (!isNew) body.id = v.id;
     $('bSave').disabled = true;
     try { const r = await api('/.netlify/functions/leads',{method:'POST',body:JSON.stringify(body)});
+      const prodato = st==='kupio' && (isNew || v.status!=='kupio');
       if (isNew) S.leads.unshift(r.item); else Object.assign(v, r.item);
-      render(); toast(isNew?'Dodato':'Sačuvano'); closeDr();
+      closeDr(); render(); syncSales(); if (!prodato) toast(isNew?'Dodato':'Sačuvano');
     } catch(e){ toast('Greška: '+e.message); $('bSave').disabled=false; }
   };
   if ($('bDel')) $('bDel').onclick = async () => {
     if (!confirm('Obrisati ovu prijavu? Ovo se ne može vratiti.')) return;
-    try { await api('/.netlify/functions/leads?id='+encodeURIComponent(v.id),{method:'DELETE'}); S.leads=S.leads.filter(x=>x.id!==v.id); render(); closeDr(); toast('Obrisano'); }
+    try { await api('/.netlify/functions/leads?id='+encodeURIComponent(v.id),{method:'DELETE'}); S.leads=S.leads.filter(x=>x.id!==v.id); render(); syncSales(); closeDr(); toast('Obrisano'); }
     catch(e){ toast('Greška: '+e.message); }
   };
 }
