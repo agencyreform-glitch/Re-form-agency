@@ -760,5 +760,199 @@ window.addEventListener('resize',()=>{ if(!$('vApp').classList.contains('hide'))
   if (k) { S.key = k; try { await load(); showApp(); } catch(e){ ls('rf_key',null); } }
 })();
 </script>
+<!-- Re:Form panel: novi izgled + animacija prodaje. Nalepiti pre </body>. -->
+<style id="rfSkin">
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&display=swap');
+
+:root{
+  --p:#E11D2E; --p-d:#B5121F;
+  --lime:#E11D2E; --lime-2:#F04452; --lime-3:#FDE3E5;
+  --forest:#9E0F1B;
+  --ink:#121212; --mut:#8A8A8A; --line:#EDEDED;
+  --bg:#DCDCDC; --shell:#F1F1F1; --card:#fff;
+  --ok:#2E9D3A; --warn:#E8662B;
+}
+body{font-family:Urbanist,-apple-system,"Segoe UI",sans-serif !important;font-size:14.5px;background:var(--bg) !important;color:var(--ink)}
+.mark{background:linear-gradient(135deg,#E11D2E 0 50%,#B5121F 50% 100%) !important;border-radius:50% !important;width:34px !important;height:34px !important}
+
+/* školjka kao na referenci */
+#vApp{max-width:1220px;margin:28px auto;background:var(--shell);border-radius:36px;box-shadow:0 1px 0 rgba(0,0,0,.03),0 30px 60px -30px rgba(0,0,0,.15);overflow:clip}
+header{position:sticky;top:0;background:rgba(241,241,241,.9) !important;border-bottom:0 !important;backdrop-filter:blur(10px)}
+.hd{max-width:none !important;padding:22px 26px 10px !important}
+.logo{font-size:22px;font-weight:600;letter-spacing:-.01em}
+.logo small{color:var(--mut);font-weight:500}
+.tabs{background:transparent !important;border:0 !important;padding:0 !important;margin-left:auto !important;gap:6px !important}
+.tabs button{border-radius:999px !important;padding:9px 20px !important;color:var(--mut) !important;background:transparent !important;font-weight:500 !important;border:0 !important}
+.tabs button.on{background:var(--lime) !important;color:#fff !important;box-shadow:none !important}
+.tabs button:not(.on):hover{color:var(--ink) !important}
+.ic{width:42px !important;height:42px !important;border-radius:50% !important;background:#fff !important;border:0 !important;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+main{max-width:none !important;padding:10px 26px 30px !important}
+
+/* period čipovi */
+.chips{background:#fff;border-radius:999px;padding:4px;gap:2px !important;display:inline-flex}
+.chip{border:0 !important;background:transparent !important;border-radius:999px !important;padding:7px 15px !important;color:var(--mut) !important;font-weight:500}
+.chip.on{background:#EDEDED !important;color:var(--ink) !important;box-shadow:inset 0 0 0 1px #E2E2E2}
+.sub{color:var(--mut) !important}
+
+/* kartice */
+.card{background:#fff !important;border:0 !important;border-radius:26px !important;box-shadow:none !important;padding:22px 24px}
+h2{font-size:18px !important;font-weight:600 !important;letter-spacing:-.01em;display:flex;align-items:center;gap:10px}
+h2::before{content:"";width:38px;height:38px;border-radius:50%;border:1px solid #E6E6E6;flex:none;background:#fff radial-gradient(circle,#E11D2E 3px,transparent 3.5px)}
+.help{color:var(--mut) !important}
+
+/* glavni prihod — istaknuta crvena kartica */
+.hero{gap:16px !important}
+.rev{border:0 !important;padding:26px !important;color:#fff !important;position:relative;overflow:hidden;
+  background:radial-gradient(120% 90% at 100% 0%,#F04452 0%,rgba(240,68,82,0) 55%),linear-gradient(150deg,#E11D2E 0%,#C8121F 60%,#A50E19 100%) !important;
+  box-shadow:0 24px 50px -24px rgba(200,18,31,.55) !important}
+.rev::before{content:"" !important;display:block !important;position:absolute;left:auto !important;bottom:auto !important;right:-40px !important;top:-40px !important;width:230px;height:230px;background:rgba(255,255,255,.10);
+  clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);animation:rfSpin 28s linear infinite;pointer-events:none}
+.rev::after{content:"" !important;display:block !important;position:absolute;top:0;bottom:0;left:-60%;width:40%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-18deg);opacity:0;pointer-events:none}
+.rev > *{position:relative;z-index:1}
+.rev-h .l,.rev-h .l b{color:#fff !important}
+.rev-h .l{opacity:.85;font-weight:500;letter-spacing:.04em}
+.rev-h .dot{background:#fff !important;box-shadow:0 0 0 4px rgba(255,255,255,.25) !important}
+.rev-v,#nRev{color:#fff !important;font-weight:500 !important;letter-spacing:-.04em !important}
+.rev-v .cur{color:rgba(255,255,255,.75) !important;font-weight:400}
+.rev-sub,.rev-sub b{color:#fff !important}
+.rev-sub{opacity:.85}
+.dlt{background:rgba(255,255,255,.16) !important;color:#fff !important;border:1px solid rgba(255,255,255,.28) !important;border-radius:999px !important}
+.dlt b{color:#fff !important}
+.rb i{background:#fff !important;border-radius:10px 10px 4px 4px !important;box-shadow:none !important}
+.rb.z i{background:rgba(255,255,255,.18) !important}
+.rb.ft i,.rb.z.td i{background:#fff !important}
+.rb em{color:#fff !important}
+.rax span{color:rgba(255,255,255,.65) !important}
+.rev-s{border-top:0 !important;gap:10px !important;background:transparent !important;margin:20px 0 0 !important}
+.rev-s > div{background:rgba(255,255,255,.12) !important;border-radius:18px !important;border:0 !important;padding:14px 16px !important;backdrop-filter:blur(4px)}
+.rev-s > div + div{border-left:0 !important}
+.rev-s .k,.rev-s .s{color:rgba(255,255,255,.7) !important}
+.rev-s .v{color:#fff !important}
+
+/* animacija prodaje */
+@keyframes rfSpin{to{transform:rotate(360deg)}}
+@keyframes rfPop{0%{transform:scale(1)}18%{transform:scale(.975)}45%{transform:scale(1.025)}70%{transform:scale(.995)}100%{transform:scale(1)}}
+@keyframes rfShine{0%{left:-60%;opacity:0}15%{opacity:1}100%{left:130%;opacity:0}}
+@keyframes rfGlow{0%{box-shadow:0 0 0 0 rgba(225,29,46,.6),0 24px 50px -24px rgba(200,18,31,.55)}100%{box-shadow:0 0 0 28px rgba(225,29,46,0),0 24px 50px -24px rgba(200,18,31,.55)}}
+@keyframes rfNum{0%{transform:translateY(0) scale(1);filter:blur(0)}25%{transform:translateY(-14px) scale(1.12);filter:blur(1px)}55%{transform:translateY(4px) scale(.97);filter:blur(0)}100%{transform:none}}
+.rev.win{animation:rfPop .9s cubic-bezier(.3,1.4,.4,1) both,rfGlow 1s ease-out 3 !important}
+.rev.win::after{animation:rfShine 1.1s ease-out .15s 2}
+.rev.win::before{animation-duration:3s}
+.rev.win .rev-v{animation:rfNum .9s cubic-bezier(.3,1.5,.4,1) .1s both;transform-origin:left bottom}
+.winb{border-top:0 !important;background:linear-gradient(150deg,#E11D2E,#A50E19) !important;color:#fff !important;border-radius:26px !important;box-shadow:0 30px 70px -20px rgba(165,14,25,.6) !important}
+.winb .k,.winb .s{color:rgba(255,255,255,.8) !important}
+.winb .v,.winb .v span{color:#fff !important}
+.rf-ring{position:fixed;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 2px rgba(225,29,46,.5),0 0 24px rgba(255,255,255,.5);pointer-events:none;z-index:79;transform:translate(-50%,-50%);animation:rfRing 1.1s cubic-bezier(.2,.7,.3,1) forwards}
+@keyframes rfRing{from{width:0;height:0;opacity:.9;border-width:6px}to{width:620px;height:620px;opacity:0;border-width:1px}}
+.rf-coin{position:fixed;z-index:82;pointer-events:none;font:700 15px Urbanist,sans-serif;color:#C8121F;background:#fff;padding:6px 12px;border-radius:999px;box-shadow:0 10px 24px -8px rgba(165,14,25,.6);transform:translate(-50%,-50%);animation:rfCoin 1.6s cubic-bezier(.2,.8,.3,1) forwards}
+@keyframes rfCoin{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}15%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(.9) rotate(var(--r))}}
+.rf-spark{position:fixed;z-index:82;width:8px;height:8px;pointer-events:none;background:var(--c);border-radius:2px;animation:rfSpark 1s ease-out forwards}
+@keyframes rfSpark{from{opacity:1;transform:translate(0,0) rotate(0)}to{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(540deg)}}
+@media (prefers-reduced-motion:reduce){.rev.win,.rev.win *,.rev::before,.rf-ring,.rf-coin,.rf-spark{animation:none !important}}
+
+/* bočni KPI */
+.hero-side{gap:16px !important}
+.kpi .l{color:var(--mut) !important;font-weight:500 !important;letter-spacing:.02em}
+.kpi .v{font-weight:500 !important;letter-spacing:-.03em;color:var(--ink) !important}
+.kpi .s{color:var(--mut) !important}
+.kpi.hl{background:#fff !important;border:0 !important;box-shadow:inset 0 0 0 2px #FBD3D7 !important}
+.kpi.hl .l{display:inline-flex !important;width:max-content;background:#FDE3E5;color:#C8121F !important;padding:6px 14px;border-radius:999px}
+.kpi.hl .v{color:#E11D2E !important}
+.kpis.sm{gap:16px !important}
+
+/* grafikon po danima */
+#dChart svg [stroke="#E11D2E"]{stroke-width:3px}
+#dChart svg rect[fill="#D6D3CC"]{fill:#E6E6E6 !important}
+#dChart svg rect{rx:8px}
+.legend span:first-child i{background:#E0E0E0 !important}
+
+/* levak / barovi */
+.bar{background:#EDEDED !important;border-radius:999px !important;height:12px !important}
+.bar i{background:#D6D6D6 !important;border-radius:999px !important}
+.fr:first-child .bar i{background:var(--lime) !important}
+.fr:last-child .bar i,.lv.worst .bar i{background:var(--ink) !important}
+.lv.worst .d{color:var(--ink) !important}
+.rb i{box-shadow:none !important}
+#dPipe{grid-template-columns:repeat(5,minmax(0,1fr)) !important;gap:8px !important}
+.pipe .card{background:#F5F5F5 !important;border-radius:18px !important;padding:12px 10px !important;min-width:0}
+.pipe .card .pill{font-size:11px;white-space:nowrap}
+
+/* tabela */
+.tbl th{color:var(--mut) !important;font-weight:500 !important;border-bottom:1px solid var(--line) !important;background:transparent !important}
+.tbl td{border-bottom:1px solid #F2F2F2 !important}
+.tbl tbody tr.cl:hover td{background:#FFF6F7 !important}
+.pill{border-radius:999px !important;border:0 !important;font-weight:600}
+.st-nova{background:#EEF6FF !important;color:#2563EB !important}
+.st-u-radu{background:#FFF3E8 !important;color:#C2531A !important}
+.st-poslato{background:#F1EDFF !important;color:#6D4AE0 !important}
+.st-kupio{background:#E4F6E1 !important;color:#2E7D32 !important}
+.st-odbijeno{background:#FDECEC !important;color:#C42B2B !important}
+
+/* dugmad, polja, fioka */
+.btn.red{background:var(--lime) !important;color:#fff !important;border-radius:999px !important;border:0 !important}
+.btn.ghost{border-radius:999px !important;border:1px solid var(--forest) !important;color:var(--forest) !important;background:#fff !important}
+.inp{border-radius:14px !important;border:1px solid #E4E4E4 !important;background:#fff !important}
+.inp:focus{border-color:var(--forest) !important;box-shadow:0 0 0 3px var(--lime-3) !important}
+.seg{background:#F1F1F1 !important;border-radius:999px !important;border:0 !important}
+.seg button{border-radius:999px !important}
+.seg button.on{background:var(--lime) !important;color:#fff !important}
+.dr{border-radius:28px 0 0 28px !important;background:#F7F7F7 !important}
+.login form{border-radius:28px !important;border:0 !important}
+.legend i{border-radius:50% !important}
+
+@media (max-width:760px){
+  #vApp{margin:0;border-radius:0}
+  .hd{padding:14px 14px 6px !important}
+  main{padding:8px 14px 24px !important}
+  .tabs{margin-left:0 !important}
+}
+</style>
+<script>
+(function(){
+  var rev=document.getElementById('cRev'); if(!rev) return;
+  var lastNum=null;
+  function amount(){
+    var b=document.querySelector('.winb .v'); var t=b?b.textContent:'';
+    var m=t.match(/[\d.,]+/); if(m) return m[0].replace(/[.,]$/,'')+' €';
+    return null;
+  }
+  function fx(label){
+    if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var r=rev.getBoundingClientRect(), cx=r.left+r.width*0.3, cy=r.top+r.height*0.35;
+    [0,180,360].forEach(function(d){setTimeout(function(){
+      var g=document.createElement('div');g.className='rf-ring';g.style.left=cx+'px';g.style.top=cy+'px';
+      document.body.appendChild(g);setTimeout(function(){g.remove()},1200);
+    },d)});
+    var cols=['#E11D2E','#FF6B76','#ffffff','#B5121F','#FFC2C7'];
+    for(var i=0;i<34;i++){
+      var s=document.createElement('div');s.className='rf-spark';
+      var a=Math.random()*Math.PI*2, d=90+Math.random()*220;
+      s.style.left=cx+'px';s.style.top=cy+'px';
+      s.style.setProperty('--dx',Math.cos(a)*d+'px');s.style.setProperty('--dy',Math.sin(a)*d+'px');
+      s.style.setProperty('--c',cols[i%cols.length]);
+      s.style.animationDelay=(Math.random()*.15)+'s';
+      document.body.appendChild(s);(function(el){setTimeout(function(){el.remove()},1300)})(s);
+    }
+    var txt=label||amount()||rev.dataset.rfl||'Nova prodaja';
+    for(var k=0;k<5;k++){(function(k){setTimeout(function(){
+      var c=document.createElement('div');c.className='rf-coin';
+      c.textContent=k===0?('+'+txt.replace(/^\+/,'')):'€';
+      c.style.left=(cx+(Math.random()-.5)*140)+'px';c.style.top=cy+'px';
+      c.style.setProperty('--dx',(Math.random()-.5)*160+'px');
+      c.style.setProperty('--dy',-(140+Math.random()*120)+'px');
+      c.style.setProperty('--r',(Math.random()-.5)*30+'deg');
+      document.body.appendChild(c);setTimeout(function(){c.remove()},1700);
+    },k*120)})(k)}
+    if(navigator.vibrate) navigator.vibrate([40,30,80]);
+  }
+  new MutationObserver(function(){
+    var on=rev.classList.contains('win');
+    if(on && !lastNum){ setTimeout(function(){fx()},60); }
+    lastNum=on;
+  }).observe(rev,{attributes:true,attributeFilter:['class']});
+  window.rfSaleTest=function(label){rev.dataset.rfl=label||'200 €';rev.classList.remove('win');void rev.offsetWidth;rev.classList.add('win');setTimeout(function(){rev.classList.remove('win')},3200)};
+})();
+</script>
 </body>
 </html>
