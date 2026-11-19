@@ -954,5 +954,55 @@ h2::before{content:"";width:38px;height:38px;border-radius:50%;border:1px solid 
   window.rfSaleTest=function(label){rev.dataset.rfl=label||'200 €';rev.classList.remove('win');void rev.offsetWidth;rev.classList.add('win');setTimeout(function(){rev.classList.remove('win')},3200)};
 })();
 </script>
+<style id="rfSkinMobile">
+/* telefon */
+@media (max-width:600px){
+  body{font-size:14px}
+  .hd{padding:12px 14px 8px !important;gap:10px !important}
+  .ic{width:38px !important;height:38px !important}
+  .tabs{order:3;width:100%;display:flex !important;background:#fff !important;border-radius:999px !important;padding:4px !important;gap:2px !important}
+  .tabs button{flex:1 1 0;min-width:0;padding:9px 4px !important;font-size:14px !important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  main{padding:6px 12px calc(24px + env(safe-area-inset-bottom)) !important}
+
+  .chips{display:flex !important;flex-wrap:nowrap !important;overflow-x:auto;max-width:100%;min-width:0;flex:1 1 100%;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{flex:none;white-space:nowrap;padding:7px 13px !important}
+
+  .card{padding:18px !important;border-radius:22px !important}
+  h2{font-size:16px !important}
+  h2::before{width:32px;height:32px}
+
+  .rev{padding:20px !important}
+  .rb em{display:none !important}
+  .rev-s{margin:16px 0 0 !important;gap:8px !important}
+  .rev-s > div{padding:12px 14px !important}
+
+  #dPipe{grid-template-columns:repeat(3,minmax(0,1fr)) !important}
+  .pipe .card .pill{white-space:normal;text-align:center}
+
+  .inp{font-size:16px !important}
+  #iSearch{flex:1 1 0;min-width:0;width:auto !important}
+
+  #tLeads thead{display:none}
+  #tLeads,#tLeads tbody{display:block;width:100%}
+  #tLeads tr.cl{display:grid;grid-template-columns:auto auto 1fr auto;grid-template-areas:"n n n s" "p p p v" "d k i i";gap:6px 10px;padding:14px 4px;border-bottom:1px solid #F2F2F2}
+  #tLeads tr.cl td{display:block;padding:0 !important;border:0 !important;background:transparent !important;min-width:0}
+  #tLeads tr.cl td:nth-child(1){grid-area:d;font-size:12.5px}
+  #tLeads tr.cl td:nth-child(2){grid-area:n}
+  #tLeads tr.cl td:nth-child(3){grid-area:p;font-weight:500}
+  #tLeads tr.cl td:nth-child(4){grid-area:k;font-size:12.5px;color:var(--mut)}
+  #tLeads tr.cl td:nth-child(5){grid-area:i;font-size:12.5px}
+  #tLeads tr.cl td:nth-child(6){grid-area:s;justify-self:end}
+  #tLeads tr.cl td:nth-child(7){grid-area:v;justify-self:end;font-weight:600}
+  #tLeads tr.cl:active{background:#FFF6F7}
+
+  .tbl th,.tbl td{padding-left:8px !important;padding-right:8px !important}
+  .dr{border-radius:0 !important}
+  .dr .row > a.btn{flex:1 1 0;justify-content:center;text-align:center;padding:11px 8px !important;border-radius:999px !important;text-decoration:none !important;font-size:14px}
+  .dr .row > a.btn:not(.ghost){background:var(--lime) !important;color:#fff !important;border:0 !important}
+  .dr .seg{display:grid !important;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px !important;background:transparent !important;padding:0 !important}
+  .dr .seg button{background:#fff;padding:10px 4px !important;white-space:nowrap}
+}
+</style>
 </body>
 </html>
